@@ -31,10 +31,11 @@ def sendMail(toaddrs=None, subject=None, imsg=None):
     server.login(em_username,em_passwd)
     server.sendmail(fromaddr, toaddrs, msg)
     server.quit()
+    return True
 
 
 
-def data_alert(string_data=None, nodename=None):
+def data_alert(string_data=None):
     if string_data == None:
         return False
     for rule in config['ALERTS']['Rules'].split('\n'):
@@ -50,7 +51,7 @@ def data_alert(string_data=None, nodename=None):
                 reciepments = config['DEFAULT']['ClientEmail'].split('\n') + config['DEFAULT']['DeveloperEmail'].split('\n')
 
 
-            sendMail(toaddrs=reciepments, subject=nodename, imsg=msg)
+            sendMail(toaddrs=reciepments, subject='mn_error', imsg=msg)
     return True
 
 
@@ -102,6 +103,5 @@ if __name__ == "__main__":
         }
     }
 
-    print(dataToSend)
-    data_alert(string_data=dataToSend, nodename=hostname):
+    data_alert(string_data=dataToSend, nodename=hostname)
     sendSocketData(dataToSend)
