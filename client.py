@@ -6,11 +6,13 @@ import smtplib
 import configparser
 import re
 
+config_path = '/home/crypto/config/client.conf'
+server_certificate = "/home/crypto/crt/CryptoFrontSSL.crt"
+
 config = configparser.ConfigParser()
 config.read(config_path)
 
-config_path = '/home/crypto/config/client.conf'
-server_certificate = "/home/crypto/crt/CryptoFrontSSL.crt"
+
 server_ip = config['WEB']['Server_addr']
 server_port = config['WEB']['Server_port']
 mn_cli_path_locate_cmd = 'find /home/crypto/ -name "*-cli"'
