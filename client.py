@@ -15,7 +15,7 @@ config.read(config_path)
 
 server_ip = config['WEB']['Server_addr']
 server_port = config['WEB']['Server_port']
-mn_cli_path_locate_cmd = 'find /home/crypto/ -name "*-cli"'
+mn_cli_path_locate_cmd = 'find /home/crypto/ -name "*-cli" ! -path "*qa*"'
 #mn_cli_path_locate_cmd = 'find /root/ALQO/src -name "*-cli"'
 mn_status_cmd = 'masternode status'
 #mn_cli_path_locate = 'locate -i -r ".*-cli$"'
@@ -37,7 +37,7 @@ def sendMail(toaddrs=None, subject=None, imsg=None):
 
 
 
-def data_alert(string_data=None):
+def data_alert(string_data=None nodename=None):
     if string_data == None:
         return False
     for rule in config['ALERTS']['Rules'].split('\n'):
@@ -53,7 +53,7 @@ def data_alert(string_data=None):
                 reciepments = config['DEFAULT']['ClientEmail'].split('\n') + config['DEFAULT']['DeveloperEmail'].split('\n')
 
 
-            sendMail(toaddrs=reciepments, subject='mn_error', imsg=msg)
+            sendMail(toaddrs=reciepments, subject=nodename, imsg=msg)
     return True
 
 
