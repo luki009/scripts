@@ -37,7 +37,7 @@ def sendMail(toaddrs=None, subject=None, imsg=None):
 
 
 
-def data_alert(string_data=None nodename=None):
+def data_alert(string_data=None, nodename=None):
     if string_data == None:
         return False
     for rule in config['ALERTS']['Rules'].split('\n'):
