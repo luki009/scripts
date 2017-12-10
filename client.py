@@ -43,7 +43,7 @@ def data_alert(string_data=None, nodename=None):
     for rule in config['ALERTS']['Rules'].split('\n'):
         cat, reg, msg = rule.split('|')
         prog = re.compile(reg)
-        if prog.match(string_data):
+        if prog.match(str(string_data)):
             print('Rule found: ', reg)
             if cat == 'd':
                 reciepments = config['DEFAULT']['DeveloperEmail'].split('\n')
