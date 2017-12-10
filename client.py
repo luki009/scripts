@@ -107,3 +107,4 @@ if __name__ == "__main__":
 
     data_alert(string_data=dataToSend, nodename=hostname)
     sendSocketData(dataToSend)
+    exec_command('cd /home/crypto/scripts && git pull')
