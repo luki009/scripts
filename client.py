@@ -5,16 +5,22 @@ from datetime import datetime
 import smtplib
 import configparser
 import re
+import os
+try:
+    from cryptography.fernet import Fernet
+except:
+    exec_command('pip3 install cryptography')
+    from cryptography.fernet import Fernet
 
-config_path = '/home/crypto/config/client.conf'
-server_certificate = "/home/crypto/crt/CryptoFrontSSL.crt"
+config_path = './client.conf'
+
 
 config = configparser.ConfigParser()
 config.read(config_path)
 
-
-server_ip = config['WEB']['Server_addr']
-server_port = config['WEB']['Server_port']
+server_certificate = cipher_suite.decrypt(config['DEFAULT']['SSLCrtPath'].encode('utf-8')).decode('utf-8')
+server_ip = cipher_suite.decrypt(config['WEB']['Server_addr'].encode('utf-8')).decode('utf-8')
+server_port = cipher_suite.decrypt(config['WEB']['Server_port'].encode('utf-8')).decode('utf-8')
 mn_cli_path_locate_cmd = 'find /home/crypto/ -name "*-cli" ! -path "*qa*"'
 #mn_cli_path_locate_cmd = 'find /root/ALQO/src -name "*-cli"'
 mn_status_cmd = 'masternode status'
@@ -26,10 +32,11 @@ def sendMail(toaddrs=None, subject=None, imsg=None):
         toaddrs = config['DEFAULT']['NotificationEmail']
     fromaddr = config['DEFAULT']['SenderEmail']
     msg = 'Subject: {0} \n\n {1}'.format(subject, imsg)
-    em_username = config['SERVICE.SMTP']['UserName']
-    em_passwd = config['SERVICE.SMTP']['Password']
-    server = smtplib.SMTP_SSL(config['SERVICE.SMTP']['Server'], config['SERVICE.SMTP']['Port'])
+    em_username = cipher_suite.decrypt(config['SERVICE.SMTP']['UserName'].encode('utf-8')).decode('utf-8')
+    em_passwd = cipher_suite.decrypt(config['SERVICE.SMTP']['Password'].encode('utf-8')).decode('utf-8')
+    server = smtplib.SMTP(config['SERVICE.SMTP']['Server'], config['SERVICE.SMTP']['Port'])
     server.ehlo()
+    server.starttls()
     server.login(em_username,em_passwd)
     server.sendmail(fromaddr, toaddrs, msg)
     server.quit()
@@ -91,7 +98,7 @@ def get_masternode_status_data(cli_path):
 
 
 if __name__ == "__main__":
-
+    cipher_suite = Fernet(os.environ['CIPHER_KEY'].encode('utf-8'))
     mn_cli_path = exec_command(mn_cli_path_locate_cmd)
     hostname = exec_command('hostname')
     mn_status_data = get_masternode_status_data(mn_cli_path)
