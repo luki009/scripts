@@ -13,7 +13,7 @@ except:
     from cryptography.fernet import Fernet
 
 config_path = './client.conf'
-
+cipher_suite = Fernet(os.environ['CIPHER_KEY'].encode('utf-8'))
 
 config = configparser.ConfigParser()
 config.read(config_path)
@@ -98,7 +98,7 @@ def get_masternode_status_data(cli_path):
 
 
 if __name__ == "__main__":
-    cipher_suite = Fernet(os.environ['CIPHER_KEY'].encode('utf-8'))
+
     mn_cli_path = exec_command(mn_cli_path_locate_cmd)
     hostname = exec_command('hostname')
     mn_status_data = get_masternode_status_data(mn_cli_path)
