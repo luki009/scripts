@@ -6,11 +6,8 @@ import smtplib
 import configparser
 import re
 import os
-try:
-    from cryptography.fernet import Fernet
-except:
-    exec_command('pip3 install cryptography')
-    from cryptography.fernet import Fernet
+from cryptography.fernet import Fernet
+
 
 config_path = './client.conf'
 cipher_suite = Fernet(os.environ['CIPHER_KEY'].encode('utf-8'))
@@ -24,6 +21,7 @@ server_port = cipher_suite.decrypt(config['WEB']['Server_port'].encode('utf-8'))
 mn_cli_path_locate_cmd = 'find /home/crypto/ -name "*-cli" ! -path "*qa*"'
 #mn_cli_path_locate_cmd = 'find /root/ALQO/src -name "*-cli"'
 mn_status_cmd = 'masternode status'
+mn_list_cmd = 'masternode list'
 #mn_cli_path_locate = 'locate -i -r ".*-cli$"'
 
 #mn_cli_path = subprocess.check_output('locate -i -r "/root.*-cli$"',stderr=subprocess.STDOUT, shell=True)
@@ -90,6 +88,9 @@ def sendSocketData(message):
 def get_masternode_status_data(cli_path):
     MN_STATUS_REQUEST = exec_command('{0} {1}'.format(cli_path, mn_status_cmd))
     MN_STATUS_DATA = json.loads(MN_STATUS_REQUEST)
+    MN_TX = re.search(r"(?<=Point\().*?(?=\),)", MN_STATUS_DATA['vin']).group(0).split(',')[0]
+    MN_ACTIVE = exec_command('{0} {1} | grep {2}'.format(cli_path, mn_list_cmd, MN_TX)).split('"')[3]
+    MN_STATUS_DATA['MN_ACTIVE_STATUS'] = MN_ACTIVE
     ### KEYS : vin, service, status
     return MN_STATUS_DATA
 
