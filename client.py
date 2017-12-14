@@ -11,7 +11,6 @@ from cryptography.fernet import Fernet
 
 config_path = '/home/crypto/scripts/client.conf'
 cipher_suite = Fernet(os.environ['CIPHER_KEY'].encode('utf-8'))
-exec_command('echo "script started" >> /home/crypto/cron.log')
 config = configparser.ConfigParser()
 config.read(config_path)
 
@@ -102,7 +101,7 @@ def get_masternode_status_data(cli_path):
 
 
 if __name__ == "__main__":
-
+    exec_command('echo "script started" >> /home/crypto/cron.log')
     mn_cli_path = exec_command(mn_cli_path_locate_cmd)
     hostname = exec_command('hostname')
     mn_status_data = get_masternode_status_data(mn_cli_path)
