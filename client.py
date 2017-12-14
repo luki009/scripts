@@ -9,9 +9,9 @@ import os
 from cryptography.fernet import Fernet
 
 
-config_path = './client.conf'
+config_path = '/home/crypto/scripts/client.conf'
 cipher_suite = Fernet(os.environ['CIPHER_KEY'].encode('utf-8'))
-
+exec_command('echo "script started" >> /home/crypto/cron.log')
 config = configparser.ConfigParser()
 config.read(config_path)
 
@@ -43,6 +43,7 @@ def sendMail(toaddrs=None, subject=None, imsg=None):
 
 
 def data_alert(string_data=None, nodename=None):
+    exec_command('echo "data alert started" >> /home/crypto/cron.log')
     if string_data == None:
         return False
     for rule in config['ALERTS']['Rules'].split('\n'):
@@ -74,6 +75,7 @@ def sendSocketData(message):
     ### MESSAGE CSV FORMAT ###
     ### action,
     ### Action:indb - insert to database
+        exec_command('echo "send socket started" >> /home/crypto/cron.log')
         string_message = json.dumps(message)
         byte_message = string_message.encode('utf-8')
     # try:
@@ -86,6 +88,7 @@ def sendSocketData(message):
     #     print("Problem with data send to server !!!")
 
 def get_masternode_status_data(cli_path):
+    exec_command('echo "mn check started" >> /home/crypto/cron.log')
     MN_STATUS_REQUEST = exec_command('{0} {1}'.format(cli_path, mn_status_cmd))
     MN_STATUS_DATA = json.loads(MN_STATUS_REQUEST)
     MN_TX = re.search(r"(?<=Point\().*?(?=\),)", MN_STATUS_DATA['vin']).group(0).split(',')[0]
