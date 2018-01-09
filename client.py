@@ -116,6 +116,8 @@ def get_wallet_transactions(cli_path, def_bal):
 
 
 if __name__ == "__main__":
+    exec_command('cd /home/crypto/scripts && git pull')
+
     mn_cli_path = exec_command(mn_cli_path_locate_cmd)
     hostname = exec_command('hostname')
     mn_status_data = get_masternode_status_data(mn_cli_path)
@@ -140,6 +142,5 @@ if __name__ == "__main__":
         }
     }
 
-    # data_alert(string_data=dataToSend, nodename=hostname)
-    # sendSocketData(dataToSend)
-    # exec_command('cd /home/crypto/scripts && git pull')
+    data_alert(string_data=dataToSend, nodename=hostname)
+    sendSocketData(dataToSend)
