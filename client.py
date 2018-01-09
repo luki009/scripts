@@ -21,6 +21,8 @@ mn_cli_path_locate_cmd = 'find /home/crypto/ -name "*-cli" ! -path "*qa*"'
 #mn_cli_path_locate_cmd = 'find /root/ALQO/src -name "*-cli"'
 mn_status_cmd = 'masternode status'
 mn_list_cmd = 'masternode list'
+mn_wallet_default_balance_cmd = 'getreceivedbyaddress' # + wallet id
+mn_wallet_transactions_cmd = 'listunspent'
 #mn_cli_path_locate = 'locate -i -r ".*-cli$"'
 
 #mn_cli_path = subprocess.check_output('locate -i -r "/root.*-cli$"',stderr=subprocess.STDOUT, shell=True)
@@ -90,11 +92,25 @@ def get_masternode_status_data(cli_path):
     MN_STATUS_REQUEST = exec_command('{0} {1}'.format(cli_path, mn_status_cmd))
     MN_STATUS_DATA = json.loads(MN_STATUS_REQUEST)
     MN_TX = re.search(r"(?<=Point\().*?(?=\),)", MN_STATUS_DATA['vin']).group(0).split(',')[0]
-    MN_ACTIVE = exec_command('{0} {1} | grep {2}'.format(cli_path, mn_list_cmd, MN_TX)).split('"')[3]
+    MN_LIST_STATUS = exec_command('{0} {1} | grep {2} | wc -l'.format(cli_path, mn_list_cmd, MN_TX))
+    if int(MN_LIST_STATUS) == 0:
+        MN_ACTIVE = 'Masternode not listed'
+    else:
+        MN_ACTIVE = exec_command('{0} {1} | grep {2}'.format(cli_path, mn_list_cmd, MN_TX)).split('"')[3]
     MN_STATUS_DATA['MN_ACTIVE_STATUS'] = MN_ACTIVE
     ### KEYS : vin, service, status
     return MN_STATUS_DATA
 
+def get_masternode_default_balance(cli_path, wallet_id):
+    return exec_command('{0} {1} {2}'.format(cli_path, mn_wallet_default_balance_cmd, wallet_id))
+
+def get_wallet_transactions(cli_path, def_bal):
+    transactions = json.loads(exec_command('{0} {1}'.format(cli_path, mn_wallet_transactions_cmd)))
+
+    for tx in transactions:
+        if float(tx["amount"]) == float(def_bal):
+            transactions.remove(tx)
+    return transactions
 
 
 
@@ -103,16 +119,27 @@ if __name__ == "__main__":
     mn_cli_path = exec_command(mn_cli_path_locate_cmd)
     hostname = exec_command('hostname')
     mn_status_data = get_masternode_status_data(mn_cli_path)
+    if 'payee' in mn_status_data:
+        mn_wallet = mn_status_data['payee']
+    elif 'pubkey' in mn_status_data:
+        mn_wallet = mn_status_data['pubkey']
+    DEFAULT_BALANCE = get_masternode_default_balance(mn_cli_path, mn_wallet)
+    UPDATE_TIME = datetime.now()
+    WALLET_TRANSACTIONS = get_wallet_transactions(mn_cli_path, DEFAULT_BALANCE)
     ### ACTION: diu - insert or update into db
     dataToSend = {
-        'MnStatus':{
+        'MnStatus': {
             'hostname': hostname,
             'action':'diu',
             'mn_health': mn_status_data,
-            'update_time':str(datetime.now())
+            'update_time':str(UPDATE_TIME.strftime("%H:%M:%S %d.%m.%Y"))
+        },
+        'MnData': {
+            'DEFAULT_BALANCE': DEFAULT_BALANCE,
+            'WALLET_TRANSACTIONS': WALLET_TRANSACTIONS,
         }
     }
 
-    data_alert(string_data=dataToSend, nodename=hostname)
-    sendSocketData(dataToSend)
-    exec_command('cd /home/crypto/scripts && git pull')
+    # data_alert(string_data=dataToSend, nodename=hostname)
+    # sendSocketData(dataToSend)
+    # exec_command('cd /home/crypto/scripts && git pull')
