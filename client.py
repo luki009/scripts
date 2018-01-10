@@ -18,7 +18,8 @@ server_certificate = cipher_suite.decrypt(config['DEFAULT']['SSLCrtPath'].encode
 server_ip = cipher_suite.decrypt(config['WEB']['Server_addr'].encode('utf-8')).decode('utf-8')
 server_port = cipher_suite.decrypt(config['WEB']['Server_port'].encode('utf-8')).decode('utf-8')
 mn_cli_path_locate_cmd = 'find /home/crypto/ -name "*-cli" ! -path "*qa*"'
-#mn_cli_path_locate_cmd = 'find /root/ALQO/src -name "*-cli"'
+mn_conf_path_locate_cmd = 'find /home/crypto/*/ -name "*.conf" ! -path "*qa*"'
+
 mn_status_cmd = 'masternode status'
 mn_list_cmd = 'masternode list'
 mn_wallet_default_balance_cmd = 'getreceivedbyaddress' # + wallet id
@@ -128,6 +129,7 @@ if __name__ == "__main__":
     DEFAULT_BALANCE = get_masternode_default_balance(mn_cli_path, mn_wallet)
     UPDATE_TIME = datetime.now()
     WALLET_TRANSACTIONS = get_wallet_transactions(mn_cli_path, DEFAULT_BALANCE)
+    MN_COIN = mn_conf_path_locate_cmd.split('/')[-1].split('.')[0]
     ### ACTION: diu - insert or update into db
     dataToSend = {
         'MnStatus': {
@@ -139,6 +141,7 @@ if __name__ == "__main__":
         'MnData': {
             'DEFAULT_BALANCE': DEFAULT_BALANCE,
             'WALLET_TRANSACTIONS': WALLET_TRANSACTIONS,
+            'MN_COIN': MN_COIN,
         }
     }
 
