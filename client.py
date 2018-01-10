@@ -129,7 +129,7 @@ if __name__ == "__main__":
     DEFAULT_BALANCE = get_masternode_default_balance(mn_cli_path, mn_wallet)
     UPDATE_TIME = datetime.now()
     WALLET_TRANSACTIONS = get_wallet_transactions(mn_cli_path, DEFAULT_BALANCE)
-    MN_COIN = cli_path.split('/')[-1].split('-')[0]
+    MN_COIN = mn_cli_path.split('/')[-1].split('-')[0]
     ### ACTION: diu - insert or update into db
     dataToSend = {
         'MnStatus': {
