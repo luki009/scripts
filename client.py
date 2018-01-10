@@ -144,6 +144,6 @@ if __name__ == "__main__":
             'MN_COIN': MN_COIN,
         }
     }
-
+    print(dataToSend)
     data_alert(string_data=dataToSend, nodename=hostname)
     sendSocketData(dataToSend)
