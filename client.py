@@ -129,14 +129,14 @@ if __name__ == "__main__":
     DEFAULT_BALANCE = get_masternode_default_balance(mn_cli_path, mn_wallet)
     UPDATE_TIME = datetime.now()
     WALLET_TRANSACTIONS = get_wallet_transactions(mn_cli_path, DEFAULT_BALANCE)
-    MN_COIN = mn_conf_path_locate_cmd.split('/')[-1].split('.')[0]
+    MN_COIN = exec_command(mn_conf_path_locate_cmd).split('/')[-1].split('.')[0]
     ### ACTION: diu - insert or update into db
     dataToSend = {
         'MnStatus': {
             'hostname': hostname,
             'action':'diu',
             'mn_health': mn_status_data,
-            'update_time':str(UPDATE_TIME.strftime("%H:%M:%S %d.%m.%Y"))
+            'update_time':str(UPDATE_TIME.strftime("%d.%m.%Y %H:%M:%S"))
         },
         'MnData': {
             'DEFAULT_BALANCE': DEFAULT_BALANCE,
