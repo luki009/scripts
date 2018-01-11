@@ -24,6 +24,7 @@ mn_status_cmd = 'masternode status'
 mn_list_cmd = 'masternode list'
 mn_wallet_default_balance_cmd = 'getreceivedbyaddress' # + wallet id
 mn_wallet_transactions_cmd = 'listunspent'
+mn_import_wallet_cmd = 'importaddress'
 #mn_cli_path_locate = 'locate -i -r ".*-cli$"'
 
 #mn_cli_path = subprocess.check_output('locate -i -r "/root.*-cli$"',stderr=subprocess.STDOUT, shell=True)
@@ -113,7 +114,8 @@ def get_wallet_transactions(cli_path, def_bal):
             transactions.remove(tx)
     return transactions
 
-
+def set_import_address(cli_path, wallet):
+    exec_command('{0} {1} "{2}"'.format(cli_path, mn_import_wallet_cmd, wallet))
 
 
 if __name__ == "__main__":
@@ -126,6 +128,7 @@ if __name__ == "__main__":
         mn_wallet = mn_status_data['payee']
     elif 'pubkey' in mn_status_data:
         mn_wallet = mn_status_data['pubkey']
+    set_import_address(mn_cli_path, mn_wallet)
     DEFAULT_BALANCE = get_masternode_default_balance(mn_cli_path, mn_wallet)
     UPDATE_TIME = datetime.now()
     WALLET_TRANSACTIONS = get_wallet_transactions(mn_cli_path, DEFAULT_BALANCE)
