@@ -128,7 +128,7 @@ if __name__ == "__main__":
         mn_wallet = mn_status_data['payee']
     elif 'pubkey' in mn_status_data:
         mn_wallet = mn_status_data['pubkey']
-    set_import_address(mn_cli_path, mn_wallet)
+    # set_import_address(mn_cli_path, mn_wallet)
     DEFAULT_BALANCE = get_masternode_default_balance(mn_cli_path, mn_wallet).split('.')[0]
     UPDATE_TIME = datetime.now()
     WALLET_TRANSACTIONS = get_wallet_transactions(mn_cli_path, DEFAULT_BALANCE)
