@@ -166,5 +166,8 @@ if __name__ == "__main__":
         }
     }
     print(dataToSend)
-    data_alert(string_data=dataToSend, nodename=hostname)
+    try:
+        data_alert(string_data=dataToSend, nodename=hostname)
+    except:
+        pass
     sendSocketData(dataToSend)
