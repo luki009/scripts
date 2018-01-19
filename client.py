@@ -100,6 +100,7 @@ def get_masternode_status_data(cli_path):
         systemnode = 1
     MN_STATUS_DATA = json.loads(MN_STATUS_REQUEST)
     MN_TX = re.search(r"(?<=Point\().*?(?=\),)", MN_STATUS_DATA['vin']).group(0).split(',')[0]
+    print(MN_TX)
     if systemnode == 1:
         MN_LIST_STATUS = exec_command('{0} {1} | grep {2} | wc -l'.format(cli_path, sn_list_cmd, MN_TX))
     else:
@@ -107,7 +108,7 @@ def get_masternode_status_data(cli_path):
     if int(MN_LIST_STATUS) == 0:
         MN_ACTIVE = 'Masternode not listed'
     else:
-        MN_ACTIVE = exec_command('{0} {1} | grep {2}'.format(cli_path, mn_list_cmd, MN_TX))
+        MN_ACTIVE = exec_command('{0} {1} | grep {2}'.format(cli_path, mn_list_cmd, MN_TX)).split(':')[1].strip('\" ')
         print(MN_ACTIVE)
         
     MN_STATUS_DATA['MN_ACTIVE_STATUS'] = MN_ACTIVE
