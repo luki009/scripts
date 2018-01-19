@@ -51,7 +51,7 @@ def data_alert(string_data=None, nodename=None):
     if string_data == None:
         return False
     for rule in config['ALERTS']['Rules'].split('\n'):
-        cat, reg, msg = rule.split('|')
+        cat, reg, msg = rule.split(';')
         prog = re.compile(reg)
         if prog.match(str(string_data)):
             print('Rule found: ', reg)
