@@ -105,11 +105,14 @@ def get_masternode_status_data(cli_path):
         MN_LIST_STATUS = exec_command('{0} {1} | grep {2} | wc -l'.format(cli_path, sn_list_cmd, MN_TX))
     else:
         MN_LIST_STATUS = exec_command('{0} {1} | grep {2} | wc -l'.format(cli_path, mn_list_cmd, MN_TX))
-    if int(MN_LIST_STATUS) == 0:
-        MN_ACTIVE = 'Masternode not listed'
-    else:
-        MN_ACTIVE = exec_command('{0} {1} | grep {2}'.format(cli_path, mn_list_cmd, MN_TX)).split(':')[1].strip('\" ')
-        print(MN_ACTIVE)
+        if int(MN_LIST_STATUS) == 0:
+            MN_ACTIVE = 'Masternode not listed'
+        else:
+            if systemnode == 1:
+                MN_ACTIVE = exec_command('{0} {1} | grep {2}'.format(cli_path, sn_list_cmd, MN_TX)).split(':')[1].strip('\" ')
+            else:
+                MN_ACTIVE = exec_command('{0} {1} | grep {2}'.format(cli_path, mn_list_cmd, MN_TX)).split(':')[1].strip('\" ')
+            
         
     MN_STATUS_DATA['MN_ACTIVE_STATUS'] = MN_ACTIVE
     ### KEYS : vin, service, status
