@@ -21,7 +21,9 @@ mn_cli_path_locate_cmd = 'find /home/crypto/ -name "*-cli" ! -path "*qa*"'
 # mn_conf_path_locate_cmd = 'find /home/crypto/.*core -name "*.conf" ! -path "/home/crypto/.*/sentinel/*" ! -name "masternode*"'
 
 mn_status_cmd = 'masternode status'
+sn_status_cmd = 'systemnode status'
 mn_list_cmd = 'masternode list'
+sn_list_cmd = 'systemnode list'
 mn_wallet_default_balance_cmd = 'getreceivedbyaddress' # + wallet id
 mn_wallet_transactions_cmd = 'listunspent'
 mn_import_wallet_cmd = 'importaddress'
@@ -91,12 +93,17 @@ def sendSocketData(message):
     #     print("Problem with data send to server !!!")
 
 def get_masternode_status_data(cli_path):
+    systemnode = 0
     MN_STATUS_REQUEST = exec_command('{0} {1}'.format(cli_path, mn_status_cmd))
     if re.search("This is not a masternode", MN_STATUS_REQUEST):
-        MN_STATUS_REQUEST = exec_command('{0} {1}'.format(cli_path, "systemnode status"))
+        MN_STATUS_REQUEST = exec_command('{0} {1}'.format(cli_path, sn_status_cmd))
+        systemnode = 1
     MN_STATUS_DATA = json.loads(MN_STATUS_REQUEST)
     MN_TX = re.search(r"(?<=Point\().*?(?=\),)", MN_STATUS_DATA['vin']).group(0).split(',')[0]
-    MN_LIST_STATUS = exec_command('{0} {1} | grep {2} | wc -l'.format(cli_path, mn_list_cmd, MN_TX))
+    if systemnode == 1:
+        MN_LIST_STATUS = exec_command('{0} {1} | grep {2} | wc -l'.format(cli_path, sn_list_cmd, MN_TX))
+    else:
+        MN_LIST_STATUS = exec_command('{0} {1} | grep {2} | wc -l'.format(cli_path, mn_list_cmd, MN_TX))
     if int(MN_LIST_STATUS) == 0:
         MN_ACTIVE = 'Masternode not listed'
     else:
