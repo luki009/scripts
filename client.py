@@ -92,6 +92,8 @@ def sendSocketData(message):
 
 def get_masternode_status_data(cli_path):
     MN_STATUS_REQUEST = exec_command('{0} {1}'.format(cli_path, mn_status_cmd))
+    if re.search("This is not a masternode", MN_STATUS_REQUEST):
+        MN_STATUS_REQUEST = exec_command('{0} {1}'.format(cli_path, "systemnode status"))
     MN_STATUS_DATA = json.loads(MN_STATUS_REQUEST)
     MN_TX = re.search(r"(?<=Point\().*?(?=\),)", MN_STATUS_DATA['vin']).group(0).split(',')[0]
     MN_LIST_STATUS = exec_command('{0} {1} | grep {2} | wc -l'.format(cli_path, mn_list_cmd, MN_TX))
