@@ -22,8 +22,10 @@ mn_cli_path_locate_cmd = 'find /home/crypto/ -name "*-cli" ! -path "*qa*"'
 
 mn_status_cmd = 'masternode status'
 sn_status_cmd = 'systemnode status'
+smartn_status_cmd = 'smartnode status'
 mn_list_cmd = 'masternode list'
 sn_list_cmd = 'systemnode list'
+smartn_list_cmd = 'smartnode list'
 mn_wallet_default_balance_cmd = 'getreceivedbyaddress' # + wallet id
 mn_wallet_transactions_cmd = 'listunspent'
 mn_import_wallet_cmd = 'importaddress'
@@ -93,11 +95,18 @@ def sendSocketData(message):
     #     print("Problem with data send to server !!!")
 
 def get_masternode_status_data(cli_path):
-    systemnode = 0
+    masternode = 1
+    systemnode = 1
+    smartnode = 1
     MN_STATUS_REQUEST = exec_command('{0} {1}'.format(cli_path, mn_status_cmd))
-    if re.search("This is not a masternode", MN_STATUS_REQUEST):
+    if re.search("This is not a masternode", MN_STATUS_REQUEST) or re.search("Method not found", MN_STATUS_REQUEST):
+        masternode = 0
         MN_STATUS_REQUEST = exec_command('{0} {1}'.format(cli_path, sn_status_cmd))
-        systemnode = 1
+    if re.search("This is not a systemnode", MN_STATUS_REQUEST) or re.search("Method not found", MN_STATUS_REQUEST):
+        systemnode = 0
+        MN_STATUS_REQUEST = exec_command('{0} {1}'.format(cli_path, smartn_status_cmd))
+    if re.search("This is not a smartnode", MN_STATUS_REQUEST) or re.search("Method not found", MN_STATUS_REQUEST):
+        smartnode = 0
     MN_STATUS_DATA = json.loads(MN_STATUS_REQUEST)
     MN_TX = re.search(r"(?<=Point\().*?(?=\),)", MN_STATUS_DATA['vin']).group(0).split(',')[0]
     print(MN_TX)
@@ -107,12 +116,18 @@ def get_masternode_status_data(cli_path):
             MN_ACTIVE = 'Systemnode not listed'
         else:
             MN_ACTIVE = exec_command('{0} {1} | grep {2}'.format(cli_path, sn_list_cmd, MN_TX)).split(':')[1].strip('\" ')
-    else:
+    elif masternode == 1:
         MN_LIST_STATUS = exec_command('{0} {1} | grep {2} | wc -l'.format(cli_path, mn_list_cmd, MN_TX))
         if int(MN_LIST_STATUS) == 0:
             MN_ACTIVE = 'Masternode not listed'
         else:
             MN_ACTIVE = exec_command('{0} {1} | grep {2}'.format(cli_path, mn_list_cmd, MN_TX)).split(':')[1].strip('\", ')
+    elif smartnode == 1:
+        MN_LIST_STATUS = exec_command('{0} {1} | grep {2} | wc -l'.format(cli_path, smartn_list_cmd, MN_TX))
+        if int(MN_LIST_STATUS) == 0:
+            MN_ACTIVE = 'Masternode not listed'
+        else:
+            MN_ACTIVE = exec_command('{0} {1} | grep {2}'.format(cli_path, smartn_list_cmd, MN_TX)).split(':')[1].strip('\", ')
             
         
     MN_STATUS_DATA['MN_ACTIVE_STATUS'] = MN_ACTIVE
