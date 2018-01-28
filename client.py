@@ -95,18 +95,25 @@ def sendSocketData(message):
     #     print("Problem with data send to server !!!")
 
 def get_masternode_status_data(cli_path):
-    masternode = 1
-    systemnode = 1
-    smartnode = 1
-    MN_STATUS_REQUEST = exec_command('{0} {1}'.format(cli_path, mn_status_cmd))
-    if re.search("This is not a masternode", MN_STATUS_REQUEST) or re.search("Method not found", MN_STATUS_REQUEST):
-        masternode = 0
-        MN_STATUS_REQUEST = exec_command('{0} {1}'.format(cli_path, sn_status_cmd))
-    if re.search("This is not a systemnode", MN_STATUS_REQUEST) or re.search("Method not found", MN_STATUS_REQUEST):
-        systemnode = 0
-        MN_STATUS_REQUEST = exec_command('{0} {1}'.format(cli_path, smartn_status_cmd))
-    if re.search("This is not a smartnode", MN_STATUS_REQUEST) or re.search("Method not found", MN_STATUS_REQUEST):
-        smartnode = 0
+    masternode = 0
+    systemnode = 0
+    smartnode = 0
+    while masternode != 1 or systemnode != 1 or smartnode != 1:
+        MN_STATUS_REQUEST = exec_command('{0} {1}'.format(cli_path, mn_status_cmd))
+        if re.search("This is not a masternode", MN_STATUS_REQUEST) or re.search("Method not found", MN_STATUS_REQUEST):
+
+            MN_STATUS_REQUEST = exec_command('{0} {1}'.format(cli_path, sn_status_cmd))
+        else:
+            masternode = 1
+        if re.search("This is not a systemnode", MN_STATUS_REQUEST) or re.search("Method not found", MN_STATUS_REQUEST):
+
+            MN_STATUS_REQUEST = exec_command('{0} {1}'.format(cli_path, smartn_status_cmd))
+        else:
+            systemnode = 1
+        if re.search("This is not a smartnode", MN_STATUS_REQUEST) or re.search("Method not found", MN_STATUS_REQUEST):
+            break
+        else:
+            smartnode = 1
     MN_STATUS_DATA = json.loads(MN_STATUS_REQUEST)
     MN_TX = re.search(r"(?<=Point\().*?(?=\),)", MN_STATUS_DATA['vin']).group(0).split(',')[0]
     print(MN_TX)
