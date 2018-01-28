@@ -105,18 +105,22 @@ def get_masternode_status_data(cli_path):
             MN_STATUS_REQUEST = exec_command('{0} {1}'.format(cli_path, sn_status_cmd))
         else:
             masternode = 1
+            break
         if re.search("This is not a systemnode", MN_STATUS_REQUEST) or re.search("Method not found", MN_STATUS_REQUEST):
 
             MN_STATUS_REQUEST = exec_command('{0} {1}'.format(cli_path, smartn_status_cmd))
         else:
             systemnode = 1
+            break
         if re.search("This is not a smartnode", MN_STATUS_REQUEST) or re.search("Method not found", MN_STATUS_REQUEST):
             break
         else:
             smartnode = 1
+            break
     MN_STATUS_DATA = json.loads(MN_STATUS_REQUEST)
     MN_TX = re.search(r"(?<=Point\().*?(?=\),)", MN_STATUS_DATA['vin']).group(0).split(',')[0]
     print(MN_TX)
+    print(masternode, systemnode, smartnode)
     if systemnode == 1:
         MN_LIST_STATUS = exec_command('{0} {1} | grep {2} | wc -l'.format(cli_path, sn_list_cmd, MN_TX))
         if int(MN_LIST_STATUS) == 0:
