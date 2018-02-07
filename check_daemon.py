@@ -24,4 +24,4 @@ if __name__ == '__main__':
         sys.exit()
     else:
         print("daemon is dead")
-        exec_command(process_cmd)
+        exec_command(coind_cmd)
