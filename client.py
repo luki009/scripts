@@ -156,7 +156,7 @@ def get_masternode_status_data(cli_path):
 
 def get_masternode_default_balance(cli_path, wallet_id):
     if wallet_id == 'None':
-        return 0
+        return str(0)
     return exec_command('{0} {1} {2}'.format(cli_path, mn_wallet_default_balance_cmd, wallet_id))
 
 def get_wallet_transactions(cli_path, def_bal):
