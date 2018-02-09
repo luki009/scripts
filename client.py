@@ -129,7 +129,7 @@ def get_masternode_status_data(cli_path):
             if int(MN_LIST_STATUS) == 0:
                 MN_ACTIVE = 'NOT_LISTED'
             else:
-                MN_ACTIVE = exec_command('{0} {1} | grep {2}'.format(cli_path, sn_list_cmd, MN_TX)).split(':')[1].strip('\" ')
+                MN_ACTIVE = exec_command('{0} {1} | grep {2}'.format(cli_path, sn_list_cmd, MN_TX)).split(':')[1].strip('\", ')
     elif masternode == 1:
         if re.match('^0*$', MN_TX):
             MN_ACTIVE = 'NEW_START_REQUIRED'
