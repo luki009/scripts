@@ -23,10 +23,10 @@ if __name__ == '__main__':
     blockcount_cmd = mn_cli_path + ' getblockcount'
     actual_blocks = exec_command(blockcount_cmd)
     try:
-        with open('./blocks.txt', 'r') as blocks:
+        with open('/home/crypto/blocks.txt', 'r') as blocks:
              blockcount = blocks.read()
     except:
-        with open('./blocks.txt', 'w') as blocks:
+        with open('/home/crypto/blocks.txt', 'w') as blocks:
              blocks.write('0')
              sys.exit()
 
@@ -35,10 +35,10 @@ if __name__ == '__main__':
         time.sleep(10)
         exec_command(coind_cmd)
         # print('blocks are same')
-        with open('./blocks.txt', 'w') as blocks:
+        with open('/home/crypto/blocks.txt', 'w') as blocks:
              blocks.write(actual_blocks)
     else:
         # print('blocks are different')
-        with open('./blocks.txt', 'w') as blocks:
+        with open('/home/crypto/blocks.txt', 'w') as blocks:
              blocks.write(actual_blocks)
              sys.exit()
