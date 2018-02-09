@@ -183,6 +183,8 @@ if __name__ == "__main__":
         mn_wallet = mn_status_data['pubkey']
     else:
         mn_wallet = 'None'
+        mn_status_data['payee'] = mn_wallet
+
     # set_import_address(mn_cli_path, mn_wallet)
     DEFAULT_BALANCE = get_masternode_default_balance(mn_cli_path, mn_wallet).split('.')[0]
     UPDATE_TIME = datetime.now()
