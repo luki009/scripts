@@ -122,25 +122,34 @@ def get_masternode_status_data(cli_path):
     print(MN_TX)
     print(masternode, systemnode, smartnode)
     if systemnode == 1:
-        MN_LIST_STATUS = exec_command('{0} {1} | grep {2} | wc -l'.format(cli_path, sn_list_cmd, MN_TX))
-        if int(MN_LIST_STATUS) == 0:
-            MN_ACTIVE = 'Systemnode not listed'
+        if re.match('^0*$', MN_TX):
+            MN_ACTIVE = 'NEW_START_REQUIRE
         else:
-            MN_ACTIVE = exec_command('{0} {1} | grep {2}'.format(cli_path, sn_list_cmd, MN_TX)).split(':')[1].strip('\" ')
+            MN_LIST_STATUS = exec_command('{0} {1} | grep {2} | wc -l'.format(cli_path, sn_list_cmd, MN_TX))
+            if int(MN_LIST_STATUS) == 0:
+                MN_ACTIVE = 'NOT_LISTED'
+            else:
+                MN_ACTIVE = exec_command('{0} {1} | grep {2}'.format(cli_path, sn_list_cmd, MN_TX)).split(':')[1].strip('\" ')
     elif masternode == 1:
-        MN_LIST_STATUS = exec_command('{0} {1} | grep {2} | wc -l'.format(cli_path, mn_list_cmd, MN_TX))
-        if int(MN_LIST_STATUS) == 0:
-            MN_ACTIVE = 'Masternode not listed'
+        if re.match('^0*$', MN_TX):
+            MN_ACTIVE = 'NEW_START_REQUIRED'
         else:
-            MN_ACTIVE = exec_command('{0} {1} | grep {2}'.format(cli_path, mn_list_cmd, MN_TX)).split(':')[1].strip('\", ')
+            MN_LIST_STATUS = exec_command('{0} {1} | grep {2} | wc -l'.format(cli_path, mn_list_cmd, MN_TX))
+            if int(MN_LIST_STATUS) == 0:
+                MN_ACTIVE = 'NOT_LISTED'
+            else:
+                MN_ACTIVE = exec_command('{0} {1} | grep {2}'.format(cli_path, mn_list_cmd, MN_TX)).split(':')[1].strip('\", ')
     elif smartnode == 1:
-        MN_LIST_STATUS = exec_command('{0} {1} | grep {2} | wc -l'.format(cli_path, smartn_list_cmd, MN_TX))
-        if int(MN_LIST_STATUS) == 0:
-            MN_ACTIVE = 'Masternode not listed'
+        if re.match('^0*$', MN_TX):
+            MN_ACTIVE = 'NEW_START_REQUIRE
         else:
-            MN_ACTIVE = exec_command('{0} {1} | grep {2}'.format(cli_path, smartn_list_cmd, MN_TX)).split(':')[1].strip('\", ')
-            
-        
+            MN_LIST_STATUS = exec_command('{0} {1} | grep {2} | wc -l'.format(cli_path, smartn_list_cmd, MN_TX))
+            if int(MN_LIST_STATUS) == 0:
+                MN_ACTIVE = 'NOT_LISTED'
+            else:
+                MN_ACTIVE = exec_command('{0} {1} | grep {2}'.format(cli_path, smartn_list_cmd, MN_TX)).split(':')[1].strip('\", ')
+
+
     MN_STATUS_DATA['MN_ACTIVE_STATUS'] = MN_ACTIVE
     ### KEYS : vin, service, status
     return MN_STATUS_DATA
