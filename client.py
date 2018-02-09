@@ -123,7 +123,7 @@ def get_masternode_status_data(cli_path):
     print(masternode, systemnode, smartnode)
     if systemnode == 1:
         if re.match('^0*$', MN_TX):
-            MN_ACTIVE = 'NEW_START_REQUIRE
+            MN_ACTIVE = 'NEW_START_REQUIRED'
         else:
             MN_LIST_STATUS = exec_command('{0} {1} | grep {2} | wc -l'.format(cli_path, sn_list_cmd, MN_TX))
             if int(MN_LIST_STATUS) == 0:
@@ -141,7 +141,7 @@ def get_masternode_status_data(cli_path):
                 MN_ACTIVE = exec_command('{0} {1} | grep {2}'.format(cli_path, mn_list_cmd, MN_TX)).split(':')[1].strip('\", ')
     elif smartnode == 1:
         if re.match('^0*$', MN_TX):
-            MN_ACTIVE = 'NEW_START_REQUIRE
+            MN_ACTIVE = 'NEW_START_REQUIRED'
         else:
             MN_LIST_STATUS = exec_command('{0} {1} | grep {2} | wc -l'.format(cli_path, smartn_list_cmd, MN_TX))
             if int(MN_LIST_STATUS) == 0:
