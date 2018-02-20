@@ -7,6 +7,7 @@ import configparser
 import re
 import os
 from cryptography.fernet import Fernet
+import requests
 
 
 config_path = '/home/crypto/scripts/client.conf'
@@ -154,10 +155,13 @@ def get_masternode_status_data(cli_path):
     ### KEYS : vin, service, status
     return MN_STATUS_DATA
 
-def get_masternode_default_balance(cli_path, wallet_id):
+def get_masternode_default_balance(cli_path, wallet_id, coin):
     if wallet_id == 'None':
         return str(0)
-    return exec_command('{0} {1} {2}'.format(cli_path, mn_wallet_default_balance_cmd, wallet_id))
+    if coin == 'bitcloud':
+        return requests.get('https://chainz.cryptoid.info/btdx/api.dws?q=getbalance&a={0}'.format(wallet_id)).text
+    else:
+        return exec_command('{0} {1} {2}'.format(cli_path, mn_wallet_default_balance_cmd, wallet_id))
 
 def get_wallet_transactions(cli_path, def_bal):
     transactions = json.loads(exec_command('{0} {1}'.format(cli_path, mn_wallet_transactions_cmd)))
@@ -186,10 +190,12 @@ if __name__ == "__main__":
         mn_status_data['payee'] = mn_wallet
 
     # set_import_address(mn_cli_path, mn_wallet)
-    DEFAULT_BALANCE = get_masternode_default_balance(mn_cli_path, mn_wallet).split('.')[0]
+
     UPDATE_TIME = datetime.now()
     WALLET_TRANSACTIONS = get_wallet_transactions(mn_cli_path, DEFAULT_BALANCE)
     MN_COIN = mn_cli_path.split('/')[-1].split('-')[0]
+    DEFAULT_BALANCE = get_masternode_default_balance(mn_cli_path, mn_wallet, MN_COIN).split('.')[0]
+
     ### ACTION: diu - insert or update into db
     dataToSend = {
         'MnStatus': {
@@ -210,3 +216,4 @@ if __name__ == "__main__":
     except:
         pass
     sendSocketData(dataToSend)
+
