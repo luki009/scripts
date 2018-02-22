@@ -121,6 +121,7 @@ def get_masternode_status_data(cli_path, coin):
     MN_STATUS_DATA = json.loads(MN_STATUS_REQUEST)
     if coin == "bulwark":
         MN_TX = MN_STATUS_DATA['txhash']
+        MN_STATUS_DATA["status"] = MN_STATUS_DATA.pop("message")
     else:
         MN_TX = re.search(r"(?<=Point\().*?(?=\),)", MN_STATUS_DATA['vin']).group(0).split(',')[0]
     print(MN_TX)
