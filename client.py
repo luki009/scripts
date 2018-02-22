@@ -95,7 +95,7 @@ def sendSocketData(message):
     # except:
     #     print("Problem with data send to server !!!")
 
-def get_masternode_status_data(cli_path):
+def get_masternode_status_data(cli_path, coin):
     masternode = 0
     systemnode = 0
     smartnode = 0
@@ -119,9 +119,13 @@ def get_masternode_status_data(cli_path):
             smartnode = 1
             break
     MN_STATUS_DATA = json.loads(MN_STATUS_REQUEST)
-    MN_TX = re.search(r"(?<=Point\().*?(?=\),)", MN_STATUS_DATA['vin']).group(0).split(',')[0]
+    if coin == "bulwark":
+        MN_TX = MN_STATUS_DATA['txhash']
+    else:
+        MN_TX = re.search(r"(?<=Point\().*?(?=\),)", MN_STATUS_DATA['vin']).group(0).split(',')[0]
     print(MN_TX)
     print(masternode, systemnode, smartnode)
+
     if systemnode == 1:
         if re.match('^0*$', MN_TX):
             MN_ACTIVE = 'NEW_START_REQUIRED'
@@ -179,18 +183,21 @@ if __name__ == "__main__":
     exec_command('cd /home/crypto/scripts && git pull')
 
     mn_cli_path = exec_command(mn_cli_path_locate_cmd)
+    MN_COIN = mn_cli_path.split('/')[-1].split('-')[0]
+
     hostname = exec_command('hostname')
-    mn_status_data = get_masternode_status_data(mn_cli_path)
+    mn_status_data = get_masternode_status_data(mn_cli_path, MN_COIN)
     if 'payee' in mn_status_data:
         mn_wallet = mn_status_data['payee']
     elif 'pubkey' in mn_status_data:
         mn_wallet = mn_status_data['pubkey']
+    elif 'addr' in mn_status_data:
+        mn_wallet = mn_status_data['addr']
     else:
         mn_wallet = 'None'
         mn_status_data['payee'] = mn_wallet
 
     # set_import_address(mn_cli_path, mn_wallet)
-    MN_COIN = mn_cli_path.split('/')[-1].split('-')[0]
     DEFAULT_BALANCE = get_masternode_default_balance(mn_cli_path, mn_wallet, MN_COIN).split('.')[0]
     UPDATE_TIME = datetime.now()
     WALLET_TRANSACTIONS = get_wallet_transactions(mn_cli_path, DEFAULT_BALANCE)
