@@ -157,7 +157,6 @@ def get_masternode_status_data(cli_path, coin):
                 if int(MN_LIST_STATUS) == 0:
                     MN_ACTIVE = 'NOT_LISTED'
                 else:
-                    if coin == 'bulwark':
                     MN_ACTIVE = exec_command('{0} {1} | grep {2}'.format(cli_path, mn_list_cmd, MN_TX)).split(':')[1].strip('\", ')
 
         elif smartnode == 1:
