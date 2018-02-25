@@ -61,7 +61,7 @@ def get_bwk_balance(wallet):
     s = requests.get('https://altmix.org/coins/10-Bulwark/explorer/address/{0}'.format(wallet)).text
     soup = BeautifulSoup(s, 'html.parser')
     tables = soup.find_all('table')
-    return tables[0].find_all('td')[-1].get_text()
+    return tables[0].find_all('td')[-1].get_text().strip('\n')
 
 def data_alert(string_data=None, nodename=None):
     if string_data == None:
