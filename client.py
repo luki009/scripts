@@ -57,7 +57,7 @@ def get_bwk_balance(wallet):
         from bs4 import BeautifulSoup
     except:
         exec_command('pip install beautifulsoup4')
-        return 0
+        return str(0)
     s = requests.get('https://altmix.org/coins/10-Bulwark/explorer/address/{0}'.format(wallet)).text
     soup = BeautifulSoup(s, 'html.parser')
     tables = soup.find_all('table')
