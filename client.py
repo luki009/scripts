@@ -10,6 +10,8 @@ from cryptography.fernet import Fernet
 import requests
 
 
+
+
 config_path = '/home/crypto/scripts/client.conf'
 cipher_suite = Fernet(os.environ['CIPHER_KEY'].encode('utf-8'))
 config = configparser.ConfigParser()
@@ -50,7 +52,16 @@ def sendMail(toaddrs=None, subject=None, imsg=None):
     server.quit()
     return True
 
-
+def get_bwk_balance(wallet):
+    try:
+        from bs4 import BeautifulSoup
+    except:
+        exec_command('pip install beautifulsoup4')
+        return 0
+    s = requests.get('https://altmix.org/coins/10-Bulwark/explorer/address/{0}'.format(wallet)).text
+    soup = BeautifulSoup(s, 'html.parser')
+    tables = soup.find_all('table')
+    return tables[0].find_all('td')[-1].get_text()
 
 def data_alert(string_data=None, nodename=None):
     if string_data == None:
@@ -179,6 +190,8 @@ def get_masternode_default_balance(cli_path, wallet_id, coin):
         return str(0)
     if coin == 'bitcloud':
         return requests.get('https://chainz.cryptoid.info/btdx/api.dws?q=getbalance&a={0}'.format(wallet_id)).text
+    elif coin == 'bulwark':
+        return get_bwk_balance(wallet_id)
     else:
         return exec_command('{0} {1} {2}'.format(cli_path, mn_wallet_default_balance_cmd, wallet_id))
 
