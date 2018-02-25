@@ -197,10 +197,10 @@ def get_masternode_default_balance(cli_path, wallet_id, coin):
 
 def get_wallet_transactions(cli_path, def_bal):
     transactions = json.loads(exec_command('{0} {1}'.format(cli_path, mn_wallet_transactions_cmd)))
-
-    for tx in transactions:
-        if float(tx["amount"]) == float(def_bal):
-            transactions.remove(tx)
+###############################
+    # for tx in transactions:
+    #     if float(tx["amount"]) == float(def_bal):
+    #         transactions.remove(tx)
     return transactions
 
 def set_import_address(cli_path, wallet):
@@ -226,6 +226,7 @@ if __name__ == "__main__":
         mn_status_data['payee'] = mn_wallet
 
     # set_import_address(mn_cli_path, mn_wallet)
+################    # DEFAULT_BALANCE = get_masternode_default_balance(mn_cli_path, mn_wallet, MN_COIN).split('.')[0]
     DEFAULT_BALANCE = get_masternode_default_balance(mn_cli_path, mn_wallet, MN_COIN).split('.')[0]
     UPDATE_TIME = datetime.now()
     WALLET_TRANSACTIONS = get_wallet_transactions(mn_cli_path, DEFAULT_BALANCE)
