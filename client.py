@@ -204,6 +204,8 @@ def get_masternode_balance(wallet_id, coin):
         return get_bwk_balance(wallet_id)
     elif coin == 'alqo':
         return requests.get('https://explorer.alqo.org/api/balance/{0}'.format(wallet_id)).text
+    elif coin == 'crowdcoin':
+        return requests.get('http://explorer.cryptopros.us/ext/getbalance/{0}'.format(wallet_id)).text
     else:
         return str(0)
 
