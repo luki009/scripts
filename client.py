@@ -206,7 +206,7 @@ def get_masternode_balance(wallet_id, coin):
         return requests.get('https://explorer.alqo.org/api/balance/{0}'.format(wallet_id)).text
     else:
         return str(0)
-    
+
 def get_wallet_transactions(cli_path, def_bal):
     transactions = json.loads(exec_command('{0} {1}'.format(cli_path, mn_wallet_transactions_cmd)))
 ###############################
@@ -239,7 +239,7 @@ if __name__ == "__main__":
 
     # set_import_address(mn_cli_path, mn_wallet)
     DEFAULT_BALANCE = get_masternode_default_balance(mn_cli_path, mn_wallet, MN_COIN).split('.')[0]
-    BALANCE = get_masternode_default_balance(mn_wallet, MN_COIN)
+    BALANCE = get_masternode_balance(mn_wallet, MN_COIN)
     UPDATE_TIME = datetime.now()
     WALLET_TRANSACTIONS = get_wallet_transactions(mn_cli_path, DEFAULT_BALANCE)
 
