@@ -206,6 +206,14 @@ def get_masternode_balance(wallet_id, coin):
         return requests.get('https://explorer.alqo.org/api/balance/{0}'.format(wallet_id)).text
     elif coin == 'crowdcoin':
         return requests.get('http://explorer.cryptopros.us/ext/getbalance/{0}'.format(wallet_id)).text
+    elif coin == 'innova':
+        return requests.get('http://explorer.innovacoin.info/ext/getbalance/{0}'.format(wallet_id)).text
+    elif coin == 'vivo':
+        return requests.get('http://vivo.explorerz.top:3003/ext/getbalance/{0}'.format(wallet_id)).text
+    elif coin == 'smartcash':
+        return requests.get('https://explorer3.smartcash.cc/ext/getbalance/{0}'.format(wallet_id)).text
+    elif coin == 'crowncoin':
+        return requests.get('http://ex.crownlab.eu/ext/getbalance/{0}'.format(wallet_id)).text
     else:
         return str(0)
 
