@@ -85,6 +85,7 @@ def data_alert(string_data=None, nodename=None):
 
 
 def exec_command(command):
+    print(command)
     try:
         return subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT).decode('utf-8').strip('\n')
         #return subprocess.check_output("{0}".format(command), shell=True, stderr=subprocess.STDOUT).decode('utf-8')
