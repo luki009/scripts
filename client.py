@@ -111,16 +111,17 @@ def get_masternode_status_data(cli_path, coin):
     systemnode = 0
     smartnode = 0
     while masternode != 1 or systemnode != 1 or smartnode != 1:
-        MN_STATUS_REQUEST = exec_command('{0} {1}'.format(cli_path, mn_status_cmd))
+        cmd = '{0} {1}'.format(cli_path, mn_status_cmd)
+        MN_STATUS_REQUEST = exec_command(cmd)
         if re.search("This is not a masternode", MN_STATUS_REQUEST) or re.search("Method not found", MN_STATUS_REQUEST):
-
-            MN_STATUS_REQUEST = exec_command('{0} {1}'.format(cli_path, sn_status_cmd))
+            cmd = '{0} {1}'.format(cli_path, sn_status_cmd)
+            MN_STATUS_REQUEST = exec_command(cmd)
         else:
             masternode = 1
             break
         if re.search("This is not a systemnode", MN_STATUS_REQUEST) or re.search("Method not found", MN_STATUS_REQUEST):
-
-            MN_STATUS_REQUEST = exec_command('{0} {1}'.format(cli_path, smartn_status_cmd))
+            cmd = '{0} {1}'.format(cli_path, smartn_status_cmd)
+            MN_STATUS_REQUEST = exec_command(cmd)
         else:
             systemnode = 1
             break
@@ -129,7 +130,7 @@ def get_masternode_status_data(cli_path, coin):
         else:
             smartnode = 1
             break
-    MN_STATUS_DATA = json.loads(MN_STATUS_REQUEST)
+    MN_STATUS_DATA = json.loads(re.search('{.*}', MN_STATUS_REQUEST.replace('\n', '')).group(0))
     if coin == "bulwark":
         MN_TX = MN_STATUS_DATA['txhash']
         MN_STATUS_DATA["status"] = MN_STATUS_DATA.pop("message")
@@ -137,11 +138,13 @@ def get_masternode_status_data(cli_path, coin):
         if re.match('^0*$', MN_TX):
             MN_ACTIVE = 'NEW_START_REQUIRED'
         else:
-            MN_LIST_STATUS = exec_command('{0} {1} | grep {2} | wc -l'.format(cli_path, mn_list_cmd, MN_TX))
+            cmd = '{0} {1} | grep {2} | wc -l'.format(cli_path, mn_list_cmd, MN_TX)
+            MN_LIST_STATUS = exec_command(cmd)
             if int(MN_LIST_STATUS) == 0:
                 MN_ACTIVE = 'NOT_LISTED'
             else:
-                node_list = json.loads(exec_command('{0} {1}'.format(cli_path, mn_list_cmd)))
+                cmd = '{0} {1}'.format(cli_path, mn_list_cmd)
+                node_list = json.loads(exec_command(cmd))
                 for node in node_list:
                     if node['txhash'] == MN_TX:
                         MN_ACTIVE = node['status']
@@ -155,30 +158,36 @@ def get_masternode_status_data(cli_path, coin):
             if re.match('^0*$', MN_TX):
                 MN_ACTIVE = 'NEW_START_REQUIRED'
             else:
-                MN_LIST_STATUS = exec_command('{0} {1} | grep {2} | wc -l'.format(cli_path, sn_list_cmd, MN_TX))
+                cmd = '{0} {1} | grep {2} | wc -l'.format(cli_path, sn_list_cmd, MN_TX)
+                MN_LIST_STATUS = exec_command(cmd)
                 if int(MN_LIST_STATUS) == 0:
                     MN_ACTIVE = 'NOT_LISTED'
                 else:
-                    MN_ACTIVE = exec_command('{0} {1} | grep {2}'.format(cli_path, sn_list_cmd, MN_TX)).split(':')[1].strip('\", ')
+                    cmd = '{0} {1} | grep {2}'.format(cli_path, sn_list_cmd, MN_TX)
+                    MN_ACTIVE = exec_command(cmd).split(':')[1].strip('\", ')
         elif masternode == 1:
             if re.match('^0*$', MN_TX):
                 MN_ACTIVE = 'NEW_START_REQUIRED'
             else:
-                MN_LIST_STATUS = exec_command('{0} {1} | grep {2} | wc -l'.format(cli_path, mn_list_cmd, MN_TX))
+                cmd = '{0} {1} | grep {2} | wc -l'.format(cli_path, mn_list_cmd, MN_TX)
+                MN_LIST_STATUS = exec_command(cmd)
                 if int(MN_LIST_STATUS) == 0:
                     MN_ACTIVE = 'NOT_LISTED'
                 else:
-                    MN_ACTIVE = exec_command('{0} {1} | grep {2}'.format(cli_path, mn_list_cmd, MN_TX)).split(':')[1].strip('\", ')
+                    cmd = '{0} {1} | grep {2}'.format(cli_path, mn_list_cmd, MN_TX)
+                    MN_ACTIVE = exec_command(cmd).split(':')[1].strip('\", ')
 
         elif smartnode == 1:
             if re.match('^0*$', MN_TX):
                 MN_ACTIVE = 'NEW_START_REQUIRED'
             else:
-                MN_LIST_STATUS = exec_command('{0} {1} | grep {2} | wc -l'.format(cli_path, smartn_list_cmd, MN_TX))
+                cmd = '{0} {1} | grep {2} | wc -l'.format(cli_path, smartn_list_cmd, MN_TX)
+                MN_LIST_STATUS = exec_command(cmd)
                 if int(MN_LIST_STATUS) == 0:
                     MN_ACTIVE = 'NOT_LISTED'
                 else:
-                    MN_ACTIVE = exec_command('{0} {1} | grep {2}'.format(cli_path, smartn_list_cmd, MN_TX)).split(':')[1].strip('\", ')
+                    cmd = '{0} {1} | grep {2}'.format(cli_path, smartn_list_cmd, MN_TX)
+                    MN_ACTIVE = exec_command(cmd).split(':')[1].strip('\", ')
 
 
     MN_STATUS_DATA['MN_ACTIVE_STATUS'] = MN_ACTIVE
@@ -193,7 +202,8 @@ def get_masternode_default_balance(cli_path, wallet_id, coin):
     elif coin == 'bulwark':
         return get_bwk_balance(wallet_id)
     else:
-        return exec_command('{0} {1} {2}'.format(cli_path, mn_wallet_default_balance_cmd, wallet_id))
+        cmd = '{0} {1} {2}'.format(cli_path, mn_wallet_default_balance_cmd, wallet_id)
+        return exec_command(cmd)
 
 def get_masternode_balance(wallet_id, coin):
     if wallet_id == 'None':
@@ -221,7 +231,8 @@ def get_masternode_balance(wallet_id, coin):
         return str(0)
 
 def get_wallet_transactions(cli_path, def_bal):
-    transactions = json.loads(exec_command('{0} {1}'.format(cli_path, mn_wallet_transactions_cmd)))
+    cmd = '{0} {1}'.format(cli_path, mn_wallet_transactions_cmd)
+    transactions = json.loads(exec_command(cmd))
 ###############################
     for tx in transactions:
         if float(tx["amount"]) == float(def_bal):
@@ -229,7 +240,8 @@ def get_wallet_transactions(cli_path, def_bal):
     return transactions
 
 def set_import_address(cli_path, wallet):
-    exec_command('{0} {1} "{2}"'.format(cli_path, mn_import_wallet_cmd, wallet))
+    cmd = '{0} {1} "{2}"'.format(cli_path, mn_import_wallet_cmd, wallet)
+    exec_command(cmd)
 
 
 if __name__ == "__main__":
