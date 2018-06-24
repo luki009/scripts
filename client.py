@@ -213,7 +213,7 @@ def get_masternode_balance(wallet_id, coin):
         if coin == 'bitcloud':
             return requests.get('https://chainz.cryptoid.info/btdx/api.dws?q=getbalance&a={0}'.format(wallet_id)).text
         elif coin == 'bulwark':
-            return get_bwk_balance(wallet_id)
+            return requests.get('https://explorer.bulwarkcrypto.com/ext/getbalance/{0}'.format(wallet_id)).text
         elif coin == 'alqo':
             return requests.get('https://explorer.alqo.org/api/balance/{0}'.format(wallet_id)).text
         elif coin == 'crowdcoin':
