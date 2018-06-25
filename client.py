@@ -131,6 +131,7 @@ def get_masternode_status_data(cli_path, coin):
             smartnode = 1
             break
     MN_STATUS_DATA = json.loads(MN_STATUS_REQUEST)
+    print(MN_STATUS_DATA)
     if coin == "bulwark":
         MN_TX = MN_STATUS_DATA['txhash']
         MN_STATUS_DATA["status"] = MN_STATUS_DATA.pop("message")
