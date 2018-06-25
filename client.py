@@ -85,7 +85,6 @@ def data_alert(string_data=None, nodename=None):
 
 
 def exec_command(command):
-    print(command)
     try:
         return subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT).decode('utf-8').strip('\n')
         #return subprocess.check_output("{0}".format(command), shell=True, stderr=subprocess.STDOUT).decode('utf-8')
@@ -131,7 +130,7 @@ def get_masternode_status_data(cli_path, coin):
         else:
             smartnode = 1
             break
-    MN_STATUS_DATA = json.loads(re.search('{.*}', MN_STATUS_REQUEST.replace('\n', '')).group(0))
+    MN_STATUS_DATA = json.loads(MN_STATUS_REQUEST)
     if coin == "bulwark":
         MN_TX = MN_STATUS_DATA['txhash']
         MN_STATUS_DATA["status"] = MN_STATUS_DATA.pop("message")
