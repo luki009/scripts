@@ -131,6 +131,7 @@ def get_masternode_status_data(cli_path, coin):
             smartnode = 1
             break
     if re.match('error.*', MN_STATUS_REQUEST):
+        MN_STATUS_DATA = {}
         MN_STATUS_DATA['MN_ACTIVE_STATUS'] = 'ERROR'
     else:
         MN_STATUS_DATA = json.loads(MN_STATUS_REQUEST)
