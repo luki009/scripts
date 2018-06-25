@@ -130,13 +130,19 @@ def get_masternode_status_data(cli_path, coin):
         else:
             smartnode = 1
             break
-    if re.match('error.*', MN_STATUS_REQUEST):
-        MN_STATUS_DATA = {}
-        MN_STATUS_DATA['MN_ACTIVE_STATUS'] = 'ERROR'
-        MN_STATUS_DATA['status'] = 'Some Bullshit occured ! (With love: Developer)'
-    else:
-        MN_STATUS_DATA = json.loads(MN_STATUS_REQUEST)
-        if coin == "bulwark":
+    if not re.match('^{*', MN_STATUS_REQUEST):
+        MN_STATUS_REQUEST = '{' + MN_STATUS_REQUEST + '}'
+#    if re.match('error.*', MN_STATUS_REQUEST):
+#        MN_STATUS_DATA = {}
+#        MN_STATUS_DATA['MN_ACTIVE_STATUS'] = 'ERROR'
+#        MN_STATUS_DATA['status'] = 'Some Bullshit occured ! (With love: Developer)'
+    MN_STATUS_DATA = json.loads(MN_STATUS_REQUEST)
+    if coin == "bulwark":
+        if 'error' in MN_STATUS_DATA:
+            MN_STATUS_DATA['status'] = MN_STATUS_DATA['error']['message']
+            if re.match('.*not yet activated.*', MN_STATUS_DATA['error']['message']):
+                MN_STATUS_DATA['MN_ACTIVE_STATUS'] = 'NEW_START_REQUIRED'
+        else:
             MN_TX = MN_STATUS_DATA['txhash']
             MN_STATUS_DATA["status"] = MN_STATUS_DATA.pop("message")
 
@@ -154,48 +160,48 @@ def get_masternode_status_data(cli_path, coin):
                         if node['txhash'] == MN_TX:
                             MN_ACTIVE = node['status']
 
-        else:
-            MN_TX = re.search(r"(?<=Point\().*?(?=\),)", MN_STATUS_DATA['vin']).group(0).split(',')[0]
-            print(MN_TX)
-            print(masternode, systemnode, smartnode)
+    else:
+        MN_TX = re.search(r"(?<=Point\().*?(?=\),)", MN_STATUS_DATA['vin']).group(0).split(',')[0]
+        print(MN_TX)
+        print(masternode, systemnode, smartnode)
 
-            if systemnode == 1:
-                if re.match('^0*$', MN_TX):
-                    MN_ACTIVE = 'NEW_START_REQUIRED'
+        if systemnode == 1:
+            if re.match('^0*$', MN_TX):
+                MN_ACTIVE = 'NEW_START_REQUIRED'
+            else:
+                cmd = '{0} {1} | grep {2} | wc -l'.format(cli_path, sn_list_cmd, MN_TX)
+                MN_LIST_STATUS = exec_command(cmd)
+                if int(MN_LIST_STATUS) == 0:
+                    MN_ACTIVE = 'NOT_LISTED'
                 else:
-                    cmd = '{0} {1} | grep {2} | wc -l'.format(cli_path, sn_list_cmd, MN_TX)
-                    MN_LIST_STATUS = exec_command(cmd)
-                    if int(MN_LIST_STATUS) == 0:
-                        MN_ACTIVE = 'NOT_LISTED'
-                    else:
-                        cmd = '{0} {1} | grep {2}'.format(cli_path, sn_list_cmd, MN_TX)
-                        MN_ACTIVE = exec_command(cmd).split(':')[1].strip('\", ')
-            elif masternode == 1:
-                if re.match('^0*$', MN_TX):
-                    MN_ACTIVE = 'NEW_START_REQUIRED'
+                    cmd = '{0} {1} | grep {2}'.format(cli_path, sn_list_cmd, MN_TX)
+                    MN_ACTIVE = exec_command(cmd).split(':')[1].strip('\", ')
+        elif masternode == 1:
+            if re.match('^0*$', MN_TX):
+                MN_ACTIVE = 'NEW_START_REQUIRED'
+            else:
+                cmd = '{0} {1} | grep {2} | wc -l'.format(cli_path, mn_list_cmd, MN_TX)
+                MN_LIST_STATUS = exec_command(cmd)
+                if int(MN_LIST_STATUS) == 0:
+                    MN_ACTIVE = 'NOT_LISTED'
                 else:
-                    cmd = '{0} {1} | grep {2} | wc -l'.format(cli_path, mn_list_cmd, MN_TX)
-                    MN_LIST_STATUS = exec_command(cmd)
-                    if int(MN_LIST_STATUS) == 0:
-                        MN_ACTIVE = 'NOT_LISTED'
-                    else:
-                        cmd = '{0} {1} | grep {2}'.format(cli_path, mn_list_cmd, MN_TX)
-                        MN_ACTIVE = exec_command(cmd).split(':')[1].strip('\", ')
+                    cmd = '{0} {1} | grep {2}'.format(cli_path, mn_list_cmd, MN_TX)
+                    MN_ACTIVE = exec_command(cmd).split(':')[1].strip('\", ')
 
-            elif smartnode == 1:
-                if re.match('^0*$', MN_TX):
-                    MN_ACTIVE = 'NEW_START_REQUIRED'
+        elif smartnode == 1:
+            if re.match('^0*$', MN_TX):
+                MN_ACTIVE = 'NEW_START_REQUIRED'
+            else:
+                cmd = '{0} {1} | grep {2} | wc -l'.format(cli_path, smartn_list_cmd, MN_TX)
+                MN_LIST_STATUS = exec_command(cmd)
+                if int(MN_LIST_STATUS) == 0:
+                    MN_ACTIVE = 'NOT_LISTED'
                 else:
-                    cmd = '{0} {1} | grep {2} | wc -l'.format(cli_path, smartn_list_cmd, MN_TX)
-                    MN_LIST_STATUS = exec_command(cmd)
-                    if int(MN_LIST_STATUS) == 0:
-                        MN_ACTIVE = 'NOT_LISTED'
-                    else:
-                        cmd = '{0} {1} | grep {2}'.format(cli_path, smartn_list_cmd, MN_TX)
-                        MN_ACTIVE = exec_command(cmd).split(':')[1].strip('\", ')
+                    cmd = '{0} {1} | grep {2}'.format(cli_path, smartn_list_cmd, MN_TX)
+                    MN_ACTIVE = exec_command(cmd).split(':')[1].strip('\", ')
 
 
-        MN_STATUS_DATA['MN_ACTIVE_STATUS'] = MN_ACTIVE
+    MN_STATUS_DATA['MN_ACTIVE_STATUS'] = MN_ACTIVE
     ### KEYS : vin, service, status
     return MN_STATUS_DATA
 
