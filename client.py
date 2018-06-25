@@ -133,6 +133,7 @@ def get_masternode_status_data(cli_path, coin):
     if re.match('error.*', MN_STATUS_REQUEST):
         MN_STATUS_DATA = {}
         MN_STATUS_DATA['MN_ACTIVE_STATUS'] = 'ERROR'
+        MN_STATUS_DATA['status'] = 'Some Bullshit ocured'
     else:
         MN_STATUS_DATA = json.loads(MN_STATUS_REQUEST)
         if coin == "bulwark":
