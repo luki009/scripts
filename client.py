@@ -132,8 +132,9 @@ def get_masternode_status_data(cli_path, coin):
             break
     MN_STATUS_DATA = json.loads(re.search('{.*}', MN_STATUS_REQUEST.replace('\n', '')).group(0))
     if coin == "bulwark":
-        MN_TX = MN_STATUS_DATA['txhash']
         MN_STATUS_DATA["status"] = MN_STATUS_DATA.pop("message")
+        # MN_TX = MN_STATUS_DATA['txhash']
+
 
         if re.match('^0*$', MN_TX):
             MN_ACTIVE = 'NEW_START_REQUIRED'
