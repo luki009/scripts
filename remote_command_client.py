@@ -11,6 +11,7 @@ import requests
 
  _DATA = {
         'action': 'remcmd',
+        'client': socket.gethostname(),
     
     }
 
@@ -82,4 +83,4 @@ def sendSocketData(message):
 if __name__ == "__main__":
 
    
-    sendSocketData(dataToSend)
+    sendSocketData(_DATA)
