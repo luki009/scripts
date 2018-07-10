@@ -283,6 +283,7 @@ if __name__ == "__main__":
 
     ### ACTION: diu - insert or update into db
     dataToSend = {
+        'action': 'mndata',
         'MnStatus': {
             'hostname': hostname,
             'action':'diu',
