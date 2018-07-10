@@ -156,6 +156,7 @@ def get_masternode_status_data(cli_path, coin):
                         MN_ACTIVE = node['status']
 
     else:
+        print(MN_STATUS_DATA)
         if 'vin' in MN_STATUS_DATA:
             MN_TX = re.search(r"(?<=Point\().*?(?=\),)", MN_STATUS_DATA['vin']).group(0).split(',')[0]
         elif 'outpoint' in MN_STATUS_DATA:
