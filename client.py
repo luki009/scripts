@@ -114,17 +114,19 @@ def get_masternode_status_data(cli_path, coin):
         cmd = '{0} {1}'.format(cli_path, mn_status_cmd)
         MN_STATUS_REQUEST = exec_command(cmd)
         if re.search("This is not a masternode", MN_STATUS_REQUEST) or re.search("Method not found", MN_STATUS_REQUEST):
-            cmd = '{0} {1}'.format(cli_path, sn_status_cmd)
-            MN_STATUS_REQUEST = exec_command(cmd)
+            pass
         else:
             masternode = 1
             break
+        cmd = '{0} {1}'.format(cli_path, sn_status_cmd)
+        MN_STATUS_REQUEST = exec_command(cmd)
         if re.search("This is not a systemnode", MN_STATUS_REQUEST) or re.search("Method not found", MN_STATUS_REQUEST):
-            cmd = '{0} {1}'.format(cli_path, smartn_status_cmd)
-            MN_STATUS_REQUEST = exec_command(cmd)
+            pass
         else:
             systemnode = 1
             break
+        cmd = '{0} {1}'.format(cli_path, smartn_status_cmd)
+        MN_STATUS_REQUEST = exec_command(cmd)
         if re.search("This is not a smartnode", MN_STATUS_REQUEST) or re.search("Method not found", MN_STATUS_REQUEST):
             break
         else:
@@ -154,7 +156,10 @@ def get_masternode_status_data(cli_path, coin):
                         MN_ACTIVE = node['status']
 
     else:
-        MN_TX = re.search(r"(?<=Point\().*?(?=\),)", MN_STATUS_DATA['vin']).group(0).split(',')[0]
+        if 'vin' in MN_STATUS_DATA:
+            MN_TX = re.search(r"(?<=Point\().*?(?=\),)", MN_STATUS_DATA['vin']).group(0).split(',')[0]
+        elif 'outpoint' in MN_STATUS_DATA:
+            MN_TX = re.search(r"(?<=Point\().*?(?=\),)", MN_STATUS_DATA['outpoint']).group(0).split(',')[0]
         print(MN_TX)
         print(masternode, systemnode, smartnode)
 
