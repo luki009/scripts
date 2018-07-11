@@ -68,7 +68,7 @@ def sendSocketData(message):
     else:
         pass
     ssl_sock.close()
-d
+
 if __name__ == "__main__":
     print(_DATA)
     sendSocketData(_DATA)
