@@ -9,11 +9,11 @@ import os
 from cryptography.fernet import Fernet
 import requests
 
- _DATA = {
-        'action': 'remcmd',
-        'client': socket.gethostname(),
-    
-    }
+_DATA = {
+    'action': 'remcmd',
+    'client': socket.gethostname(),
+
+}
 
 
 config_path = '/home/crypto/scripts/client.conf'
