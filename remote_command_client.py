@@ -58,23 +58,20 @@ def responseDispatcher(data):
 
 
 def sendSocketData(message):
-    ### MESSAGE CSV FORMAT ###
-    ### action,
-    ### Action:indb - insert to database
-        string_message = json.dumps(message)
-        byte_message = string_message.encode('utf-8')
-    # try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        ssl_sock = ssl.wrap_socket(s, ca_certs=server_certificate, cert_reqs=ssl.CERT_REQUIRED)
-        ssl_sock.connect((server_ip, int(server_port)))
-        ssl_sock.write(byte_message)
-        data = ssl_sock.recv(1024).decode()
-            if data:
-                responseDispatcher(data)
-            else:
-                pass
-            ssl_sock.close()
-            break
+    string_message = json.dumps(message)
+    byte_message = string_message.encode('utf-8')
+
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    ssl_sock = ssl.wrap_socket(s, ca_certs=server_certificate, cert_reqs=ssl.CERT_REQUIRED)
+    ssl_sock.connect((server_ip, int(server_port)))
+    ssl_sock.write(byte_message)
+    data = ssl_sock.recv(1024).decode()
+        if data:
+            responseDispatcher(data)
+        else:
+            pass
+        ssl_sock.close()
+        break
 
     # except:
     #     print("Problem with data send to server !!!")
