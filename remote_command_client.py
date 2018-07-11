@@ -27,10 +27,6 @@ server_port = cipher_suite.decrypt(config['WEB']['Server_port'].encode('utf-8'))
 mn_cli_path_locate_cmd = 'find /home/crypto/ -name "*-cli" ! -path "*qa*"'
 # mn_conf_path_locate_cmd = 'find /home/crypto/.*core -name "*.conf" ! -path "/home/crypto/.*/sentinel/*" ! -name "masternode*"'
 
-print(server_certificate)
-print(server_ip)
-print(server_port)
-
 
 def exec_command(command):
     try:
@@ -58,20 +54,34 @@ def responseDispatcher(data):
         elif json_data['cmd'] == 'cmd':
             runCmd(cmd)
 
+# def sendSocketData(message):
+#     string_message = json.dumps(message)
+#     byte_message = string_message.encode('utf-8')
+#
+#     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#     ssl_sock = ssl.wrap_socket(s, ca_certs=server_certificate, cert_reqs=ssl.CERT_REQUIRED)
+#     ssl_sock.connect((server_ip, int(server_port)))
+#     ssl_sock.write(byte_message)
+#     # data = ssl_sock.recv(1024).decode()
+#     # if data:
+#     #     responseDispatcher(data)
+#     # else:
+#     #     pass
+#     ssl_sock.close()
 def sendSocketData(message):
-    string_message = json.dumps(message)
-    byte_message = string_message.encode('utf-8')
-
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    ssl_sock = ssl.wrap_socket(s, ca_certs=server_certificate, cert_reqs=ssl.CERT_REQUIRED)
-    ssl_sock.connect((server_ip, int(server_port)))
-    ssl_sock.write(byte_message)
-    # data = ssl_sock.recv(1024).decode()
-    # if data:
-    #     responseDispatcher(data)
-    # else:
-    #     pass
-    ssl_sock.close()
-
+    ### MESSAGE CSV FORMAT ###
+    ### action,
+    ### Action:indb - insert to database
+        string_message = json.dumps(message)
+        byte_message = string_message.encode('utf-8')
+    # try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        ssl_sock = ssl.wrap_socket(s, ca_certs=server_certificate, cert_reqs=ssl.CERT_REQUIRED)
+        ssl_sock.connect((server_ip, int(server_port)))
+        ssl_sock.write(byte_message)
+        ssl_sock.close()
+    # except:
+    #     print("Problem with data
 if __name__ == "__main__":
+    print(_DATA)
     sendSocketData(_DATA)
