@@ -27,6 +27,11 @@ server_port = cipher_suite.decrypt(config['WEB']['Server_port'].encode('utf-8'))
 mn_cli_path_locate_cmd = 'find /home/crypto/ -name "*-cli" ! -path "*qa*"'
 # mn_conf_path_locate_cmd = 'find /home/crypto/.*core -name "*.conf" ! -path "/home/crypto/.*/sentinel/*" ! -name "masternode*"'
 
+print(server_certificate)
+print(server_ip)
+print(server_port)
+
+
 def exec_command(command):
     try:
         return subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT).decode('utf-8').strip('\n')
