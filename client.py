@@ -63,6 +63,17 @@ def sendMail(toaddrs=None, subject=None, imsg=None):
 #     tables = soup.find_all('table')
 #     return tables[0].find_all('td')[-1].get_text().strip('\n')
 
+def get_smartcash_balance(wallet):
+    try:
+        from bs4 import BeautifulSoup
+    except:
+        exec_command('pip3 install bs4')
+        return str(0)
+    s = requests.get('https://insight.smartcash.cc/address/{0}'.format(wallet)).text
+    soup = BeautifulSoup(s, 'html.parser')
+    tables = soup.find_all('table')
+    return tables[0].find_all('td')[-3].get_text().strip('\n').strip(' SMART')
+
 def data_alert(string_data=None, nodename=None):
     if string_data == None:
         return False
@@ -233,7 +244,7 @@ def get_masternode_balance(wallet_id, coin):
         elif coin == 'vivo':
             return requests.get('http://vivo.explorerz.top:3003/ext/getbalance/{0}'.format(wallet_id)).text
         elif coin == 'smartcash':
-            return requests.get('https://explorer3.smartcash.cc/ext/getbalance/{0}'.format(wallet_id)).text
+            return get_smartcash_balance(wallet_id)
         elif coin == 'crowncoin':
             return requests.get('http://ex.crownlab.eu/ext/getbalance/{0}'.format(wallet_id)).text
         else:
