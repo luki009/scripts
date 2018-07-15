@@ -71,7 +71,7 @@ def get_smartcash_balance(wallet):
         return str(0)
     s = requests.get('https://insight.smartcash.cc/address/{0}'.format(wallet)).text
     soup = BeautifulSoup(s, 'html.parser')
-    tables = soup.find_all('table')
+    tables = soup.find_all('tbody')
     print(tables)
     return tables[0].find_all('td')[-3].get_text().strip('\n').strip(' SMART')
 
