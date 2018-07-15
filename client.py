@@ -72,7 +72,7 @@ def get_smartcash_balance(wallet):
     s = requests.get('https://insight.smartcash.cc/address/{0}'.format(wallet)).text
     soup = BeautifulSoup(s, 'html.parser')
     tables = soup.find_all('table')
-    print(tables[0].find_all('td')[-3].get_text())
+    print(tables)
     return tables[0].find_all('td')[-3].get_text().strip('\n').strip(' SMART')
 
 def data_alert(string_data=None, nodename=None):
@@ -168,13 +168,13 @@ def get_masternode_status_data(cli_path, coin):
                         MN_ACTIVE = node['status']
 
     else:
-        print(MN_STATUS_DATA)
+        # print(MN_STATUS_DATA)
         if 'vin' in MN_STATUS_DATA:
             MN_TX = re.search(r"(?<=Point\().*?(?=\),)", MN_STATUS_DATA['vin']).group(0).split(',')[0]
         elif 'outpoint' in MN_STATUS_DATA:
             MN_TX = re.search(r"(?<=Point\().*?(?=\))", MN_STATUS_DATA['outpoint']).group(0).split(',')[0]
-        print(MN_TX)
-        print(masternode, systemnode, smartnode)
+        # print(MN_TX)
+        # print(masternode, systemnode, smartnode)
 
         if systemnode == 1:
             if re.match('^0*$', MN_TX):
