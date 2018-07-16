@@ -32,6 +32,9 @@ smartn_list_cmd = 'smartnode list'
 mn_wallet_default_balance_cmd = 'getreceivedbyaddress' # + wallet id
 mn_wallet_transactions_cmd = 'listunspent'
 mn_import_wallet_cmd = 'importaddress'
+headers = {
+    'User-agent':'Crypto_client_1.0'
+}
 #mn_cli_path_locate = 'locate -i -r ".*-cli$"'
 
 #mn_cli_path = subprocess.check_output('locate -i -r "/root.*-cli$"',stderr=subprocess.STDOUT, shell=True)
@@ -233,21 +236,21 @@ def get_masternode_balance(wallet_id, coin):
         return str(0)
     try:
         if coin == 'bitcloud':
-            return requests.get('https://chainz.cryptoid.info/btdx/api.dws?q=getbalance&a={0}'.format(wallet_id)).text
+            return requests.get('https://chainz.cryptoid.info/btdx/api.dws?q=getbalance&a={0}'.format(wallet_id), headers=headers).text
         elif coin == 'bulwark':
-            return requests.get('https://explorer.bulwarkcrypto.com/ext/getbalance/{0}'.format(wallet_id)).text
+            return requests.get('https://explorer.bulwarkcrypto.com/ext/getbalance/{0}'.format(wallet_id), headers=headers).text
         elif coin == 'alqo':
-            return requests.get('https://explorer.alqo.org/api/balance/{0}'.format(wallet_id)).text
+            return requests.get('https://explorer.alqo.org/api/balance/{0}'.format(wallet_id), headers=headers).text
         elif coin == 'crowdcoin':
-            return requests.get('http://explorer.cryptopros.us/ext/getbalance/{0}'.format(wallet_id)).text
+            return requests.get('http://explorer.cryptopros.us/ext/getbalance/{0}'.format(wallet_id), headers=headers).text
         elif coin == 'innova':
-            return requests.get('http://explorer.innovacoin.info/ext/getbalance/{0}'.format(wallet_id)).text
+            return requests.get('http://explorer.innovacoin.info/ext/getbalance/{0}'.format(wallet_id), headers=headers).text
         elif coin == 'vivo':
-            return requests.get('http://vivo.explorerz.top:3003/ext/getbalance/{0}'.format(wallet_id)).text
+            return requests.get('http://vivo.explorerz.top:3003/ext/getbalance/{0}'.format(wallet_id), headers=headers).text
         elif coin == 'smartcash':
             return get_smartcash_balance(wallet_id)
         elif coin == 'crowncoin':
-            return requests.get('http://ex.crownlab.eu/ext/getbalance/{0}'.format(wallet_id)).text
+            return requests.get('http://ex.crownlab.eu/ext/getbalance/{0}'.format(wallet_id), headers=headers).text
         else:
             return str(0)
     except:
