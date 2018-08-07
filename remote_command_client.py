@@ -1,90 +1,77 @@
 import socket, ssl
-import sqlite3
+import subprocess
 import json
-import configparser
+from datetime import datetime
 import smtplib
-import _thread
+import configparser
+import re
 import os
+from cryptography.fernet import Fernet
 import requests
 
+_DATA = {
+    'action': 'remcmd',
+    'client': socket.gethostname(),
 
-#server_listen_ip = '185.35.64.209'
-server_listen_ip = '0.0.0.0'
-server_listen_port = 5005
-server_max_connections = 1000
-# server_certificate = '/home/crypto/crt/CryptoFrontSSL.crt'
-# server_certificate_key = '/home/crypto/crt/CryptoFrontSSL.key'
-# server_db_path = '/home/crypto/WEB/cr/db.sqlite3'
-# config_path = '/home/crypto/config/server.conf'
-
-# config = configparser.ConfigParser()
-# config.read(config_path)
-server_certificate = os.path.dirname(os.path.realpath(__file__)) + '/server.crt'
-server_certificate_key = os.path.dirname(os.path.realpath(__file__)) + '/server.key'
-example_data="Hello from server"
-    # connstream.send(example_data)
+}
 
 
+config_path = '/home/crypto/scripts/client.conf'
+cipher_suite = Fernet(os.environ['CIPHER_KEY'].encode('utf-8'))
+config = configparser.ConfigParser()
+config.read(config_path)
 
-def get_profit():
-    coins = {
-        'Bulwark':{"id":224, 'hashrate':55, "algorithm":"NIST5", 'miner':'alexis', 'tag':'BWK', 'block_time':'', 'block_reward':'', 'nethash':'', 'price':'', 'profit':''},
-        'DGB-Skein':{'id':114, 'hashrate':630, "algorithm":"Skein", 'miner':'alexis', 'tag':'DGB', 'block_time':'', 'block_reward':'', 'nethash':'', 'price':'', 'profit':''},
-        'Zencash':{"id":185, 'hashrate':535, "algorithm":"Equihash", 'miner':'claymore', 'tag':'ZEN', 'block_time':'', 'block_reward':'', 'nethash':'', 'price':'', 'profit':''},
-        'Zcash':{"id":166, 'hashrate':535, "algorithm":"Equihash", 'miner':'claymore', 'tag':'ZEC', 'block_time':'', 'block_reward':'', 'nethash':'', 'price':'', 'profit':''},
-        'Zclassic':{'id':167, 'hashrate': 535, "algorithm":"Equihash", 'miner':'claymore', 'tag':'ZCL', 'block_time':'', 'block_reward':'', 'nethash':'', 'price':'', 'profit':''},
-        'BitcoinGold':{"id":214, 'hashrate':535, "algorithm":"Equihash", 'miner':'claymore', 'tag':'BTG', 'block_time':'', 'block_reward':'', 'nethash':'', 'price':'', 'profit':''},
-        'BitcoinPrivate':{'id':230, 'hashrate':535, "algorithm":"Equihash", 'miner':'claymore', 'tag':'BTCP', 'block_time':'', 'block_reward':'', 'nethash':'', 'price':'', 'profit':''},
-        'Verge-X17':{'id':219, 'hashrate':13.7, "algorithm":"X17", 'miner':'ccminer', 'tag':'XVG', 'block_time':'', 'block_reward':'', 'nethash':'', 'price':'', 'profit':''},
-        'Bitcore':{'id':202, 'hashrate':18, "algorithm": "TimeTravel10", 'miner':'ccminer', 'tag':'BTX', 'block_time':'', 'block_reward':'', 'nethash':'', 'price':'', 'profit':''},
-        'Ravencoin':{'id':234, 'hashrate':13, "algorithm":"X16R", 'miner':'ocminer', 'tag':'RVN', 'block_time':'', 'block_reward':'', 'nethash':'', 'price':'', 'profit':''},
-        'Luxcoin':{'id':212, 'hashrate':27, "algorithm":"PHI1612", 'miner':'phiminer', 'tag':'LUX', 'block_time':'', 'block_reward':'', 'nethash':'', 'price':'', 'profit':'' },
-    }
-
-    for i in coins:
-        data = requests.get('https://whattomine.com/coins/{0}.json'.format(coins[i]['id'])).json()
-        coins[i]['block_time'] = data['block_time']
-        coins[i]['block_reward'] = data['block_reward']
-        coins[i]['nethash'] = data['nethash']
-        ll = requests.get('https://www.cryptopia.co.nz/api/GetMarket/{0}_BTC'.format(coins[i]['tag'])).json()
-        if ll['Data'] is not None:
-            coins[i]['price'] = ll['Data']['LastPrice']
-        else:
-            coins[i]['price'] =  0
-        profit = (float(coins[i]['hashrate']) / int(coins[i]['nethash'])) * ((float(coins[i]['block_reward']) * 86400) / float(coins[i]['block_time'])) * float(coins[i]['price'])
-        coins[i]['profit'] = profit
-
-    return coins
+server_certificate = cipher_suite.decrypt(config['DEFAULT']['SSLCrtPath'].encode('utf-8')).decode('utf-8')
+server_ip = cipher_suite.decrypt(config['WEB']['Server_addr'].encode('utf-8')).decode('utf-8')
+server_port = cipher_suite.decrypt(config['WEB']['Server_port'].encode('utf-8')).decode('utf-8')
+mn_cli_path_locate_cmd = 'find /home/crypto/ -name "*-cli" ! -path "*qa*"'
+# mn_conf_path_locate_cmd = 'find /home/crypto/.*core -name "*.conf" ! -path "/home/crypto/.*/sentinel/*" ! -name "masternode*"'
 
 
+def exec_command(command):
+    try:
+        return subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT).decode('utf-8').strip('\n')
+        #return subprocess.check_output("{0}".format(command), shell=True, stderr=subprocess.STDOUT).decode('utf-8')
+    except subprocess.CalledProcessError as e:
+        return e.output.decode('utf-8').strip('\n')
 
+def restartWallet():
+    pass
 
-def processData(conn, data):
-    json_data = json.loads(string_data.decode('utf-8'))
+def cleanRestartWallet():
+    pass
+def runCmd(cmd):
+    exec_command(cmd)
 
-def deal_with_client(connstream):
-    data = connstream.read(1000000)
+def responseDispatcher(data):
+    string_data = data.decode('utf-8')
+    json_data = json.loads(string_data)
+    if json_data['action'] == 'remcmd':
+        if json_data['cmd'] == 'wall_restart':
+            restartWallet()
+        elif json_data['cmd'] == 'wall_clean_restart':
+            cleanRestartWallet()
+        elif json_data['cmd'] == 'cmd':
+            runCmd(cmd)
+
+def sendSocketData(message):
+    string_message = json.dumps(message)
+    byte_message = string_message.encode('utf-8')
+
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    ssl_sock = ssl.wrap_socket(s, ca_certs=server_certificate, cert_reqs=ssl.CERT_REQUIRED)
+    ssl_sock.connect((server_ip, int(server_port)))
+    ssl_sock.write(byte_message)
+    data = ssl_sock.recv(1024).decode()
+    print('waited')
     if data:
+        if data = 'close':
+            ssl_sock.close()
         print(data)
-        dataReturn = processData(connstream, data)
-        if dataReturn:
-            connstream.send(dataReturn.encode('utf-8'))
+        responseDispatcher(data)
+    else:
+        pass
+
 
 if __name__ == "__main__":
-    bindsocket = socket.socket()
-    bindsocket.bind((server_listen_ip, server_listen_port))
-    bindsocket.listen(server_max_connections)
-
-
-    while True:
-        newsocket, fromaddr = bindsocket.accept()
-        connstream = ssl.wrap_socket(newsocket,
-                                     server_side=True,
-                                     certfile=server_certificate,
-                                     keyfile=server_certificate_key)
-
-        try:
-            deal_with_client(connstream)
-        finally:
-            connstream.shutdown(socket.SHUT_RDWR)
-            connstream.close()
+    sendSocketData(_DATA)
