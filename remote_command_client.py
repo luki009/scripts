@@ -65,7 +65,7 @@ def sendSocketData(message):
     data = ssl_sock.recv(1024).decode()
     print('waited')
     if data:
-        if data = 'close':
+        if data == 'close':
             ssl_sock.close()
         print(data)
         responseDispatcher(data)
