@@ -65,13 +65,11 @@ def sendSocketData(message):
     data = ssl_sock.recv(1024).decode()
     print('waited')
     if data:
-        if data == 'close':
-            ssl_sock.close()
         print(data)
         responseDispatcher(data)
     else:
         pass
-
+    ssl_sock.close()
 
 if __name__ == "__main__":
     sendSocketData(_DATA)
