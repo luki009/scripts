@@ -63,6 +63,7 @@ def sendSocketData(message):
     ssl_sock.connect((server_ip, int(server_port)))
     ssl_sock.write(byte_message)
     data = ssl_sock.recv(1024).decode()
+    print('waited')
     if data:
         print(data)
         responseDispatcher(data)
