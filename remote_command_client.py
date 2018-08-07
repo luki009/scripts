@@ -64,11 +64,11 @@ def sendSocketData(message):
     ssl_sock.write(byte_message)
     data = ssl_sock.recv(1024).decode()
     if data:
+        print(data)
         responseDispatcher(data)
     else:
         pass
     ssl_sock.close()
 
 if __name__ == "__main__":
-    print(_DATA)
     sendSocketData(_DATA)
