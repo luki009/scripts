@@ -79,6 +79,6 @@ if __name__ == "__main__":
     sock = ssl.wrap_socket(sock, ca_certs=server_certificate, cert_reqs=ssl.CERT_REQUIRED)
     sock.connect((server_ip, int(server_port)))
     sock.sendall(byte_message)
-    # result = sock.recv(1024)
-    # print(result)
+    result = sock.recv(1024)
+    print(result)
     sock.close()
