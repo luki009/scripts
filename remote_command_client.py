@@ -60,7 +60,7 @@ def sendSocketData(message):
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ssl_sock = ssl.wrap_socket(s, ca_certs=server_certificate, cert_reqs=ssl.CERT_REQUIRED)
-    ssl_sock.connect((server_ip, server_port))
+    ssl_sock.connect((server_ip, int(server_port)))
     ssl_sock.sendall(byte_message)
     data = ssl_sock.recv(1024).decode()
     print(data)
