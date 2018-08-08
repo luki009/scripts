@@ -12,6 +12,23 @@ import requests
 _DATA = {
     'action': 'remcmd',
     'client': socket.gethostname(),
+    "ss":'kk',
+    "ss":'kk',
+    "ss":'kk',
+    "ss":'kk',
+    "ss":'kk',
+    "ss":'kk',
+    "ss":'kk',
+    "ss":'kk',
+    "ss":'kk',
+    "ss":'kk',
+    "ss":'kk',
+    "ss":'kk',
+    "ss":'kk',
+    "ss":'kk',
+    "ss":'kk',
+    "ss":'kk',
+    
 
 }
 
