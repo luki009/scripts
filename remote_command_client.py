@@ -12,22 +12,6 @@ import requests
 _DATA = {
     'action': 'remcmd',
     'client': socket.gethostname(),
-    "ss":'kk',
-    "ss":'kk',
-    "ss":'kk',
-    "ss":'kk',
-    "ss":'kk',
-    "ss":'kk',
-    "ss":'kk',
-    "ss":'kk',
-    "ss":'kk',
-    "ss":'kk',
-    "ss":'kk',
-    "ss":'kk',
-    "ss":'kk',
-    "ss":'kk',
-    "ss":'kk',
-    "ss":'kk',
 }
 
 
@@ -87,4 +71,14 @@ def sendSocketData(message):
     ssl_sock.close()
 
 if __name__ == "__main__":
-    sendSocketData(_DATA)
+    # sendSocketData(_DATA)
+    string_message = json.dumps(_DATA)
+    byte_message = string_message.encode('utf-8')
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock = ssl.wrap_socket(sock, ca_certs=server_certificate, cert_reqs=ssl.CERT_REQUIRED)
+    sock.connect((server_ip, int(server_port)))
+    sock.sendall(byte_message)
+    result = sock.recv(1024)
+    print(result)
+    sock.close()
