@@ -75,20 +75,20 @@ def sendSocketData(message):
         ssl_sock.close()
 
 if __name__ == "__main__":
-    sendSocketData(_DATA)
-    # string_message = json.dumps(_DATA)
-    # byte_message = string_message.encode('utf-8')
-    #
-    # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # sock = ssl.wrap_socket(sock, ca_certs=server_certificate, cert_reqs=ssl.CERT_REQUIRED)
-    # sock.connect((server_ip, int(server_port)))
-    # sock.sendall(byte_message)
-    # sock.shutdown(socket.SHUT_WR)
-    # try:
-    #     while True:
-    #         packet = sock.recv(1024)
-    #         result += packet
-    #         print(result)
-    #
-    # finally:
-    #     sock.close()
+    # sendSocketData(_DATA)
+    string_message = json.dumps(_DATA)
+    byte_message = string_message.encode('utf-8')
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock = ssl.wrap_socket(sock, ca_certs=server_certificate, cert_reqs=ssl.CERT_REQUIRED)
+    sock.connect((server_ip, int(server_port)))
+    sock.sendall(byte_message)
+    sock.shutdown(socket.SHUT_WR)
+    try:
+        while True:
+            packet = sock.recv(1024)
+            result += packet
+            print(result)
+
+    finally:
+        sock.close()
