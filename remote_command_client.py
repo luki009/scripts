@@ -71,7 +71,7 @@ def sendSocketData(message):
             if not packet:
                 break
         print(data)
-        responseDispatcher(data.strip())
+        # responseDispatcher(data.strip())
     finally:
         ssl_sock.close()
 
