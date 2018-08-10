@@ -76,7 +76,6 @@ def sendSocketData(message):
         else:
             pass
     finally:
-        ssl_sock.shutdown(socket.SHUT_RDWR)
         ssl_sock.close()
 
 if __name__ == "__main__":
