@@ -64,7 +64,6 @@ def sendSocketData(message):
     ssl_sock.sendall(byte_message)
     ssl_sock.shutdown(socket.SHUT_WR)
     try:
-        data = b''
         while True:
             packet = ssl_sock.recv(1024)
             data += packet
