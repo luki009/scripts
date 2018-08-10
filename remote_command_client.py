@@ -24,8 +24,9 @@ server_certificate = cipher_suite.decrypt(config['DEFAULT']['SSLCrtPath'].encode
 server_ip = cipher_suite.decrypt(config['WEB']['Server_addr'].encode('utf-8')).decode('utf-8')
 server_port = cipher_suite.decrypt(config['WEB']['Server_port'].encode('utf-8')).decode('utf-8')
 mn_cli_path_locate_cmd = 'find /home/crypto/ -name "*-cli" ! -path "*qa*"'
-# mn_conf_path_locate_cmd = 'find /home/crypto/.*core -name "*.conf" ! -path "/home/crypto/.*/sentinel/*" ! -name "masternode*"'
-
+mn_conf_path_locate_cmd = 'find /home/crypto/.*core -name "*.conf" ! -path "/home/crypto/.*/sentinel/*" ! -name "masternode*"'
+# server_ip = 'localhost'
+# server_port = 9000
 
 def exec_command(command):
     try:
@@ -61,24 +62,36 @@ def sendSocketData(message):
     ssl_sock = ssl.wrap_socket(s, ca_certs=server_certificate, cert_reqs=ssl.CERT_REQUIRED)
     ssl_sock.connect((server_ip, int(server_port)))
     ssl_sock.sendall(byte_message)
-    data = ssl_sock.recv(1024).decode()
-    print(data)
-    # if data:
-    #     print(data)
-    #     responseDispatcher(data)
-    # else:
-    #     pass
-    ssl_sock.close()
+    ssl_sock.shutdown(socket.SHUT_WR)
+    try:
+        while True:
+            packet = ssl_sock.recv(1024).decode()
+            data += packet
+            if not packet:
+                break
+        if data:
+            print(data)
+            responseDispatcher(data)
+        else:
+            pass
+    finally:
+        ssl_sock.close()
 
 if __name__ == "__main__":
-    # sendSocketData(_DATA)
-    string_message = json.dumps(_DATA)
-    byte_message = string_message.encode('utf-8')
-
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock = ssl.wrap_socket(sock, ca_certs=server_certificate, cert_reqs=ssl.CERT_REQUIRED)
-    sock.connect((server_ip, int(server_port)))
-    sock.sendall(byte_message)
-    # result = sock.recv(1024)
-    # print(result)
-    sock.close()
+    sendSocketData(_DATA)
+    # string_message = json.dumps(_DATA)
+    # byte_message = string_message.encode('utf-8')
+    #
+    # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # sock = ssl.wrap_socket(sock, ca_certs=server_certificate, cert_reqs=ssl.CERT_REQUIRED)
+    # sock.connect((server_ip, int(server_port)))
+    # sock.sendall(byte_message)
+    # sock.shutdown(socket.SHUT_WR)
+    # try:
+    #     while True:
+    #         packet = sock.recv(1024)
+    #         result += packet
+    #         print(result)
+    #
+    # finally:
+    #     sock.close()
