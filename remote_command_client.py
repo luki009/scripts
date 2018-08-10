@@ -89,7 +89,10 @@ if __name__ == "__main__":
         while True:
             packet = sock.recv(1024)
             result += packet
-            print(result)
+            if not packet:
+                break
+
+        print(result)
 
     finally:
         sock.close()
