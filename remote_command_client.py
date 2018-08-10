@@ -55,7 +55,7 @@ def responseDispatcher(data):
             runCmd(cmd)
 
 def sendSocketData(message):
-    string_message = json.dumps(message)
+    string_message = json.dumps(message.strip())
     byte_message = string_message.encode('utf-8')
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
