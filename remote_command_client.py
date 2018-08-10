@@ -70,11 +70,8 @@ def sendSocketData(message):
             data += packet
             if not packet:
                 break
-        if data:
-            print(data)
-            responseDispatcher(data)
-        else:
-            pass
+        print(data)
+        responseDispatcher(data)
     finally:
         ssl_sock.close()
 
