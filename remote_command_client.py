@@ -85,7 +85,7 @@ if __name__ == "__main__":
     sock.sendall(byte_message)
     sock.shutdown(socket.SHUT_WR)
     try:
-        result = ''
+        result = b''
         while True:
             packet = sock.recv(1024)
             result += packet
