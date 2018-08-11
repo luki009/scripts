@@ -55,7 +55,7 @@ def responseDispatcher(data):
             runCmd(cmd)
 
 def sendSocketData(message):
-    data = b''
+    data = ''
     string_message = json.dumps(message)
     byte_message = string_message.encode('utf-8')
 
@@ -66,7 +66,7 @@ def sendSocketData(message):
     ssl_sock.shutdown(socket.SHUT_WR)
     try:
         while True:
-            packet = ssl_sock.recv(1024)
+            packet = ssl_sock.recv(1024).decode()
             data += packet
             if not packet:
                 break
