@@ -88,11 +88,11 @@ if __name__ == "__main__":
         result = b''
         while True:
             packet = sock.recv(1024)
-            result += packet
+            result += packet.strip()
             if not packet:
                 break
 
-        print(result)
+        print(result.decode('utf-8'))
 
     finally:
         sock.close()
