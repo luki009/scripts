@@ -67,11 +67,12 @@ def sendSocketData(message):
     try:
         while True:
             packet = ssl_sock.recv(1024)
+            print(packet)
             data += packet
             if not packet:
                 break
         print(data)
-        print(data.decode('utf-8'))
+        # print(data.decode('utf-8'))
         # responseDispatcher(data.strip())
     finally:
         ssl_sock.close()
