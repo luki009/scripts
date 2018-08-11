@@ -66,7 +66,7 @@ def sendSocketData(message):
     ssl_sock.shutdown(socket.SHUT_WR)
     try:
         while True:
-            packet = ssl_sock.recv(1024)
+            packet = ssl_sock.recv(8)
             print(packet)
             data += packet
             if not packet:
