@@ -54,6 +54,8 @@ def responseDispatcher(data):
             cleanRestartWallet()
         elif json_data['cmd'] == 'cmd':
             runCmd(cmd)
+        else:
+            pass
 
 def sendSocketData(message):
     data = b''
