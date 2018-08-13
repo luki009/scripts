@@ -21,6 +21,7 @@ server_certificate = cipher_suite.decrypt(config['DEFAULT']['SSLCrtPath'].encode
 server_ip = cipher_suite.decrypt(config['WEB']['Server_addr'].encode('utf-8')).decode('utf-8')
 server_port = cipher_suite.decrypt(config['WEB']['Server_port'].encode('utf-8')).decode('utf-8')
 mn_cli_path_locate_cmd = 'find /home/crypto/ -name "*-cli" ! -path "*qa*"'
+_END_DATA = b'>END<'
 # mn_conf_path_locate_cmd = 'find /home/crypto/.*core -name "*.conf" ! -path "/home/crypto/.*/sentinel/*" ! -name "masternode*"'
 
 mn_status_cmd = 'masternode status'
@@ -116,7 +117,8 @@ def sendSocketData(message):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         ssl_sock = ssl.wrap_socket(s, ca_certs=server_certificate, cert_reqs=ssl.CERT_REQUIRED)
         ssl_sock.connect((server_ip, int(server_port)))
-        ssl_sock.write(byte_message)
+        ssl_sock.send(byte_message + _END_DATA)
+        ssl_sock.shutdown(socket.SHUT_RDWR)
         ssl_sock.close()
     # except:
     #     print("Problem with data send to server !!!")
