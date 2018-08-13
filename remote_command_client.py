@@ -13,7 +13,8 @@ _DATA = {
     'action': 'remcmd',
     'client': socket.gethostname(),
 }
-
+_BUFFER_SIZE = 1024
+_END_DATA = b'>END<'
 
 config_path = '/home/crypto/scripts/client.conf'
 cipher_suite = Fernet(os.environ['CIPHER_KEY'].encode('utf-8'))
@@ -62,20 +63,17 @@ def sendSocketData(message):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ssl_sock = ssl.wrap_socket(s, ca_certs=server_certificate, cert_reqs=ssl.CERT_REQUIRED)
     ssl_sock.connect((server_ip, int(server_port)))
-    ssl_sock.sendall(byte_message)
-    ssl_sock.shutdown(socket.SHUT_WR)
-    try:
-        while True:
-            packet = ssl_sock.recv(8)
-            print(packet)
-            data += packet
-            if not packet:
-                break
-        print(data)
-        # print(data.decode('utf-8'))
-        # responseDispatcher(data.strip())
-    finally:
-        ssl_sock.close()
+    ssl_sock.send(byte_message + _END_DATA)
+    data = b''
+    while True:
+        packet = ssl_sock.recv(_BUFFER_SIZE)
+        data += packet
+        if data.decode('utf-8')[-5:] == _END_DATA.decode('utf-8'):
+            data = data[:-5]
+            break
+    print(data)
+    responseDispatcher(data)
+    ssl_sock.close()
 
 if __name__ == "__main__":
     sendSocketData(_DATA)
