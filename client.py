@@ -171,6 +171,19 @@ def get_masternode_status_data(cli_path, coin):
                 for node in node_list:
                     if node['txhash'] == MN_TX:
                         MN_ACTIVE = node['status']
+    elif coin == "alqo":
+        MN_TX = MN_STATUS_DATA['txhash']
+        MN_STATUS_DATA['status'] = MN_STATUS_DATA['message']
+        cmd = '{0} {1} | grep {2} | wc -l'.format(cli_path, mn_list_cmd, MN_TX)
+        MN_LIST_STATUS = exec_command(cmd)
+        if int(MN_LIST_STATUS) == 0:
+            MN_ACTIVE = 'NOT_LISTED'
+        else:
+            cmd = '{0} {1}'.format(cli_path, mn_list_cmd)
+            node_list = json.loads(exec_command(cmd))
+            for node in node_list:
+                if node['txhash'] == MN_TX:
+                    MN_ACTIVE = node['status']
 
     else:
         # print(MN_STATUS_DATA)
