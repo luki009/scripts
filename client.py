@@ -236,7 +236,7 @@ def get_masternode_status_data(cli_path, coin):
                         MN_ACTIVE = exec_command(cmd).split(':')[1].strip('\", ')
 
 
-    MN_STATUS_DATA['MN_ACTIVE_STATUS'] = MN_ACTIVE
+        MN_STATUS_DATA['MN_ACTIVE_STATUS'] = MN_ACTIVE
     ### KEYS : vin, service, status
     return MN_STATUS_DATA
 
