@@ -67,6 +67,7 @@ def responseDispatcher(data):
     resp_data['cmd_id'] = json_data['cmd_id']
     if resp_status is None:
         resp_data['status'] = 'SUCCESSFULL'
+        resp_data['output'] = ''
     else:
         resp_data['status'] = 'FAILED'
         resp_data['output'] = resp_status
