@@ -89,7 +89,8 @@ def sendSocketData(message):
             data = data[:-5]
             break
     print(data)
-    responseDispatcher(data)
+    if data:
+        responseDispatcher(data)
     ssl_sock.close()
 
 if __name__ == "__main__":
