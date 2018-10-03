@@ -6,6 +6,7 @@ import smtplib
 import configparser
 import re
 import os
+import sys
 from cryptography.fernet import Fernet
 import requests
 
@@ -61,7 +62,7 @@ def responseDispatcher(data):
         elif json_data['cmd'] == 'update_wallet':
             resp_status = updateWallet()
         else:
-            pass
+            sys.exit()
     resp_data = _DATA
     resp_data['action'] = 'remcmd_resp'
     resp_data['cmd_id'] = json_data['cmd_id']
