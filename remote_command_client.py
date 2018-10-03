@@ -16,6 +16,7 @@ _DATA = {
 _BUFFER_SIZE = 1024
 _END_DATA = b'>END<'
 
+_CURRENT_PATH = os.path.dirname(os.path.realpath(__file__))
 config_path = '/home/crypto/scripts/client.conf'
 cipher_suite = Fernet(os.environ['CIPHER_KEY'].encode('utf-8'))
 config = configparser.ConfigParser()
@@ -43,19 +44,33 @@ def cleanRestartWallet():
     pass
 def runCmd(cmd):
     exec_command(cmd)
+def updateWallet():
+    cmd_resp = exec_command(_CURRENT_PATH + '/update_wallet.sh')
+    return cmd_resp
 
 def responseDispatcher(data):
     string_data = data.decode('utf-8')
     json_data = json.loads(string_data)
     if json_data['action'] == 'remcmd':
         if json_data['cmd'] == 'wall_restart':
-            restartWallet()
+            resp_status = restartWallet()
         elif json_data['cmd'] == 'wall_clean_restart':
-            cleanRestartWallet()
+            resp_status = cleanRestartWallet()
         elif json_data['cmd'] == 'cmd':
-            runCmd(cmd)
+            resp_status = runCmd(cmd)
+        elif json_data['cmd'] == 'update_wallet':
+            resp_status = updateWallet()
         else:
             pass
+    resp_data = _DATA
+    resp_data['action'] = 'remcmd_resp'
+    resp_data['cmd_id'] = json_data['cmd_id']
+    if resp_status is None:
+        resp_data['status'] = 'SUCCESSFULL'
+    else:
+        resp_data['status'] = 'FAILED'
+        resp_data['output'] = resp_status
+    sendSocketData(resp_data)
 
 def sendSocketData(message):
     data = b''
