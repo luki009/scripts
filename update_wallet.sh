@@ -10,7 +10,7 @@ COIN=`awk -F'/' '{ print $(NF) }' <<< $COIN_CLI | cut -d"-" -f1`
 
 echo $COIN
 #
-case $coin in
+case $COIN in
 'bulwark')
   cd ~
   rm -rf tmp
