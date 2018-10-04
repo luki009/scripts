@@ -11,7 +11,7 @@ COIN=`awk -F'/' '{ print $(NF) }' <<< $COIN_CLI | cut -d"-" -f1`
 echo $COIN
 #
 case $coin in
-bulwark)
+'bulwark')
   cd ~
   rm -rf tmp
   mkdir tmp && cd tmp
@@ -30,7 +30,7 @@ bulwark)
   Bulwark/src/bulwark-cli getinfo
   rm -rf tmp
 ;;
-alqo)
+'alqo')
   cd ~
   rm -rf tmp
   mkdir tmp && cd tmp
@@ -49,7 +49,7 @@ alqo)
   ALQO/src/alqo-cli getinfo
   rm -rf tmp
 ;;
-bitcloud)
+'bitcloud')
   cd ~
   rm -rf tmp
   mkdir tmp && cd tmp
@@ -68,7 +68,7 @@ bitcloud)
   Bitcloud/src/bitcloud-cli getinfo
   rm -rf tmp
 ;;
-innova)
+'innova')
   cd ~
   rm -rf tmp
   mkdir tmp && cd tmp
@@ -87,7 +87,7 @@ innova)
   innova/src/innova-cli getinfo
   rm -rf tmp
 ;;
-crowdcoin)
+'crowdcoin')
   cd ~
   rm -rf tmp
   mkdir tmp && cd tmp
@@ -106,7 +106,7 @@ crowdcoin)
   Crowdcoin/src/crowdcoin-cli getinfo
   rm -rf tmp
 ;;
-crown)
+'crown')
   cd ~
   rm -rf tmp
   mkdir tmp && cd tmp
@@ -126,7 +126,7 @@ crown)
   Crown/src/crown-cli getinfo
   rm -rf tmp
 ;;
-smartcash)
+'smartcash')
   cd ~
   rm -rf tmp
   mkdir tmp && cd tmp
@@ -146,7 +146,7 @@ smartcash)
   smartcash/src/smartcash-cli getinfo
   rm -rf tmp
 ;;
-vivo)
+'vivo')
   cd ~
   rm -rf tmp
   mkdir tmp && cd tmp
