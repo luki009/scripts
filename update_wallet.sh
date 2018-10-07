@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #!/bin/bash
 if [[ `whoami` -ne "crypto" ]]
 then
@@ -376,4 +375,3 @@ vivo)
   exit 1
 ;;
 esac
->>>>>>> 4f42cd8ec870db7f811498222c33c48ebc2a351d
