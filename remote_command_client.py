@@ -96,6 +96,7 @@ def sendSocketData(message):
     ssl_sock.close()
 
 if __name__ == "__main__":
+    exec_command('cd /home/crypto/scripts && git pul')
     sendSocketData(_DATA)
     # string_message = json.dumps(_DATA)
     # byte_message = string_message.encode('utf-8')
