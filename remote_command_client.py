@@ -33,10 +33,10 @@ mn_conf_path_locate_cmd = 'find /home/crypto/.*core -name "*.conf" ! -path "/hom
 
 def exec_command(command):
     try:
-        return subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT).decode('utf-8').strip('\n')
+        return 0, subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT).decode('utf-8').strip('\n')
         #return subprocess.check_output("{0}".format(command), shell=True, stderr=subprocess.STDOUT).decode('utf-8')
     except subprocess.CalledProcessError as e:
-        return e.output.decode('utf-8').strip('\n')
+        return e.returncode, e.output.decode('utf-8').strip('\n')
 
 def restartWallet():
     pass
@@ -66,7 +66,7 @@ def responseDispatcher(data):
     resp_data = _DATA
     resp_data['action'] = 'remcmd_resp'
     resp_data['cmd_id'] = json_data['cmd_id']
-    if resp_status is None:
+    if resp_status[0] == 0:
         resp_data['status'] = 'SUCCESSFULL'
         resp_data['output'] = ''
     else:
