@@ -5,7 +5,7 @@ from datetime import datetime
 import smtplib
 import configparser
 import re
-import os
+import os, shutil
 import sys
 from cryptography.fernet import Fernet
 import requests
@@ -36,18 +36,90 @@ def exec_command(command):
         return 0, subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT).decode('utf-8').strip('\n')
         #return subprocess.check_output("{0}".format(command), shell=True, stderr=subprocess.STDOUT).decode('utf-8')
     except subprocess.CalledProcessError as e:
-        return e.returncode, e.output.decode('utf-8').strip('\n')
+        return 1, e.returncode, e.output.decode('utf-8').strip('\n')
+
+def stopWallet():
+    mn_cli_path_locate_cmd = 'find /home/crypto/ -name "*-cli" ! -path "*qa*"'
+    mn_cli_path = exec_command(mn_cli_path_locate_cmd)
+    if mn_cli_path[0]:
+        stop_daemon_cmd = mn_cli_path + ' stop'
+        res = exec_command(stop_daemon_cmd)
+        if res[0] == 0:
+            time.sleep(20)
+            return True
+        else:
+            return False
+
+def startWallet():
+    mn_cli_path_locate_cmd = 'find /home/crypto/ -name "*-cli" ! -path "*qa*"'
+    mn_cli_path = exec_command(mn_cli_path_locate_cmd)
+    src_path = '/'.join(mn_cli_path[1].split('/')[:-1])
+    MN_COIN = mn_cli_path.split('/')[-1].split('-')[0]
+    coind = MN_COIN.lower() + 'd'
+    coind_cmd = src_path + '/' + coind + '-daemon -reindex'
+    start_res = exec_command(coind_cmd)
+    if start_res[0] == 0:
+        time.sleep(20)
+        return True
+    else:
+        return False
+
+def removeWalletFiles():
+    mn_cli_path_locate_cmd = 'find /home/crypto/ -name "*-cli" ! -path "*qa*"'
+    mn_cli_path = exec_command(mn_cli_path_locate_cmd)
+    MN_COIN = mn_cli_path[1].split('/')[-1].split('-')[0]
+
+    protected_files = ['wallet.dat', '{0}.conf'.format(MN_COIN.lower())]
+
+    wallet_locate_cmd = 'find /home/crypto/ -name "wallet.dat"'
+    wallet_data_path = ('/').join(wallet_locate_cmd.split('/')[:-1])
+    cf = len([name for name in os.listdir(wallet_data_path)])
+    for the_file in os.listdir(wallet_data_path):
+        if the_file is in protected_files:
+            continue
+        file_path = os.path.join(folder, the_file)
+        if os.path.isfile(file_path):
+            os.unlink(file_path)
+        elif os.path.isdir(file_path):
+            shutil.rmtree(file_path)
+    if len([name for name in os.listdir(wallet_data_path)]) == cf:
+        return False
+    else:
+        return True
 
 def restartWallet():
-    pass
-
+    stop_res = stopWallet()
+    if stop_res:
+        start_res = startWallet()
+        if start_res:
+            return 0, 'Wallet has been successfully restarted.'
+        else:
+            return 1, 'Unable to start wallet'
+    else:
+        return 1, 'Unable to stop wallet'
 def cleanRestartWallet():
-    pass
+    stop_res = stopWallet()
+    if stop_res:
+        rem_res = removeWalletFiles()
+        if rem_res:
+            start_res = startWallet()
+            if start_res:
+                return 0, 'Wallet has been successfully restarted and files removed'
+            else:
+                return 1, 'Unable to start wallet'
+        else:
+            return 1, 'Unable to remove files'
+    else:
+        return 1, 'Unable to stop wallet'
+
 def runCmd(cmd):
-    exec_command(cmd)
+    return exec_command(cmd)
 def updateWallet():
-    cmd_resp = exec_command(_CURRENT_PATH + '/update_wallet.sh')
-    return cmd_resp
+    update_res = exec_command(_CURRENT_PATH + '/update_wallet.sh')
+    if update_res[0] == 0:
+        return 0, 'Update Successfull'
+    else:
+        return 1, 'Update failed: {0}'.format(update_res[1])
 
 def responseDispatcher(data):
     string_data = data.decode('utf-8')
@@ -68,10 +140,10 @@ def responseDispatcher(data):
     resp_data['cmd_id'] = json_data['cmd_id']
     if resp_status[0] == 0:
         resp_data['status'] = 'SUCCESSFULL'
-        resp_data['output'] = ''
+        resp_data['output'] = resp_status[1]
     else:
         resp_data['status'] = 'FAILED'
-        resp_data['output'] = resp_status
+        resp_data['output'] = resp_status[1]
     sendSocketData(resp_data)
 
 def sendSocketData(message):
