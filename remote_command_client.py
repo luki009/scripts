@@ -42,7 +42,7 @@ def stopWallet():
     mn_cli_path_locate_cmd = 'find /home/crypto/ -name "*-cli" ! -path "*qa*"'
     mn_cli_path = exec_command(mn_cli_path_locate_cmd)
     if mn_cli_path[0] == 0:
-        stop_daemon_cmd = mn_cli_path + ' stop'
+        stop_daemon_cmd = mn_cli_path[1] + ' stop'
         res = exec_command(stop_daemon_cmd)
         if res[0] == 0:
             time.sleep(20)
@@ -56,7 +56,7 @@ def startWallet():
     mn_cli_path_locate_cmd = 'find /home/crypto/ -name "*-cli" ! -path "*qa*"'
     mn_cli_path = exec_command(mn_cli_path_locate_cmd)
     src_path = '/'.join(mn_cli_path[1].split('/')[:-1])
-    MN_COIN = mn_cli_path.split('/')[-1].split('-')[0]
+    MN_COIN = mn_cli_path[1].split('/')[-1].split('-')[0]
     coind = MN_COIN.lower() + 'd'
     coind_cmd = src_path + '/' + coind + '-daemon -reindex'
     start_res = exec_command(coind_cmd)
