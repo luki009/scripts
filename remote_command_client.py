@@ -41,7 +41,7 @@ def exec_command(command):
 def stopWallet():
     mn_cli_path_locate_cmd = 'find /home/crypto/ -name "*-cli" ! -path "*qa*"'
     mn_cli_path = exec_command(mn_cli_path_locate_cmd)
-    if mn_cli_path[0]:
+    if mn_cli_path[0] == 0:
         stop_daemon_cmd = mn_cli_path + ' stop'
         res = exec_command(stop_daemon_cmd)
         if res[0] == 0:
@@ -49,6 +49,8 @@ def stopWallet():
             return True
         else:
             return False
+    else:
+        return False
 
 def startWallet():
     mn_cli_path_locate_cmd = 'find /home/crypto/ -name "*-cli" ! -path "*qa*"'
