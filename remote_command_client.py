@@ -127,6 +127,9 @@ def responseDispatcher(data):
     string_data = data.decode('utf-8')
     json_data = json.loads(string_data)
     if json_data['action'] == 'remcmd':
+        if len(json_data) == 2:
+            print("no action")
+            sys.exit()
         if json_data['cmd'] == 'wall_restart':
             resp_status = restartWallet()
         elif json_data['cmd'] == 'wall_clean_restart':
