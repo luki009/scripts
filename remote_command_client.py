@@ -88,7 +88,9 @@ def removeWalletFiles():
         return True
 
 def restartWallet():
+    print('restart wallet started')
     stop_res = stopWallet()
+    print(stop_res)
     if stop_res:
         start_res = startWallet()
         if start_res:
