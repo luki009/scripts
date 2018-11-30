@@ -9,6 +9,7 @@ import os, shutil
 import sys
 from cryptography.fernet import Fernet
 import requests
+import time
 
 _DATA = {
     'action': 'remcmd',
