@@ -75,7 +75,7 @@ def removeWalletFiles():
     wallet_data_path = ('/').join(wallet_locate_cmd.split('/')[:-1])
     cf = len([name for name in os.listdir(wallet_data_path)])
     for the_file in os.listdir(wallet_data_path):
-        if the_file is in protected_files:
+        if the_file in protected_files:
             continue
         file_path = os.path.join(folder, the_file)
         if os.path.isfile(file_path):
