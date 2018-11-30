@@ -59,7 +59,7 @@ def startWallet():
     src_path = '/'.join(mn_cli_path[1].split('/')[:-1])
     MN_COIN = mn_cli_path[1].split('/')[-1].split('-')[0]
     coind = MN_COIN.lower() + 'd'
-    coind_cmd = src_path + '/' + coind + '-daemon -reindex'
+    coind_cmd = src_path + '/' + coind + ' -daemon -reindex'
     start_res = exec_command(coind_cmd)
     if start_res[0] == 0:
         time.sleep(20)
@@ -75,12 +75,13 @@ def removeWalletFiles():
     protected_files = ['wallet.dat', '{0}.conf'.format(MN_COIN.lower())]
 
     wallet_locate_cmd = 'find /home/crypto/ -name "wallet.dat"'
-    wallet_data_path = ('/').join(wallet_locate_cmd.split('/')[:-1])
+    wallet_path = exec_command(wallet_locate_cmd)
+    wallet_data_path = ('/').join(wallet_path[1].split('/')[:-1])
     cf = len([name for name in os.listdir(wallet_data_path)])
     for the_file in os.listdir(wallet_data_path):
         if the_file in protected_files:
             continue
-        file_path = os.path.join(folder, the_file)
+        file_path = os.path.join(wallet_data_path, the_file)
         if os.path.isfile(file_path):
             os.unlink(file_path)
         elif os.path.isdir(file_path):
