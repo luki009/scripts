@@ -33,6 +33,7 @@ smartn_list_cmd = 'smartnode list'
 mn_wallet_default_balance_cmd = 'getreceivedbyaddress' # + wallet id
 mn_wallet_transactions_cmd = 'listunspent'
 mn_import_wallet_cmd = 'importaddress'
+mn_blockcount_cmd = 'getblockcount'
 headers = {
     'User-agent':'Crypto_client_1.0'
 }
@@ -122,6 +123,10 @@ def sendSocketData(message):
         ssl_sock.close()
     # except:
     #     print("Problem with data send to server !!!")
+
+def get_node_block(cli_path, coin):
+    cmd = '{0} {1}'.format(cli_path, mn_blockcount_cmd)
+    return exec_command(cmd)
 
 def get_masternode_status_data(cli_path, coin):
     masternode = 0
@@ -314,6 +319,7 @@ if __name__ == "__main__":
     BALANCE = get_masternode_balance(mn_wallet, MN_COIN)
     UPDATE_TIME = datetime.now()
     WALLET_TRANSACTIONS = get_wallet_transactions(mn_cli_path, DEFAULT_BALANCE)
+    BLOCK = get_node_block(mn_cli_path)
 
 
 
@@ -324,7 +330,8 @@ if __name__ == "__main__":
             'hostname': hostname,
             'action':'diu',
             'mn_health': mn_status_data,
-            'update_time':str(UPDATE_TIME.strftime("%d.%m.%Y %H:%M:%S"))
+            'update_time':str(UPDATE_TIME.strftime("%d.%m.%Y %H:%M:%S")),
+            'block': str(BLOCK)
         },
         'MnData': {
             'DEFAULT_BALANCE': DEFAULT_BALANCE,
