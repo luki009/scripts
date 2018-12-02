@@ -73,6 +73,8 @@ def removeWalletFiles():
     MN_COIN = mn_cli_path[1].split('/')[-1].split('-')[0]
 
     protected_files = ['wallet.dat', '{0}.conf'.format(MN_COIN.lower())]
+    if '.conf' in protected_files:
+        return False
 
     wallet_locate_cmd = 'find /home/crypto/ -name "wallet.dat"'
     wallet_path = exec_command(wallet_locate_cmd)
