@@ -124,7 +124,7 @@ def sendSocketData(message):
     # except:
     #     print("Problem with data send to server !!!")
 
-def get_node_block(cli_path, coin):
+def get_node_block(cli_path):
     cmd = '{0} {1}'.format(cli_path, mn_blockcount_cmd)
     return exec_command(cmd)
 
