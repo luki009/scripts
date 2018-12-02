@@ -39,6 +39,15 @@ def exec_command(command):
     except subprocess.CalledProcessError as e:
         return 1, e.returncode, e.output.decode('utf-8').strip('\n')
 
+def exec_command_no_wait(command):
+    try:
+        return 0, subprocess.run(command, shell=True, stderr=subprocess.STDOUT).decode('utf-8').strip('\n')
+        #return subprocess.check_output("{0}".format(command), shell=True, stderr=subprocess.STDOUT).decode('utf-8')
+    except subprocess.CalledProcessError as e:
+        return 1, e.returncode, e.output.decode('utf-8').strip('\n')
+
+
+
 def stopWallet():
     mn_cli_path_locate_cmd = 'find /home/crypto/ -name "*-cli" ! -path "*qa*"'
     mn_cli_path = exec_command(mn_cli_path_locate_cmd)
@@ -60,7 +69,8 @@ def startWallet():
     MN_COIN = mn_cli_path[1].split('/')[-1].split('-')[0]
     coind = MN_COIN.lower() + 'd'
     coind_cmd = src_path + '/' + coind + ' -daemon -reindex'
-    start_res = exec_command(coind_cmd)
+
+    start_res = exec_command_no_wait(coind_cmd)
     if start_res[0] == 0:
         time.sleep(20)
         return True
