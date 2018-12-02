@@ -41,7 +41,7 @@ def exec_command(command):
 
 def exec_command_no_wait(command):
     try:
-        return 0, subprocess.run(command, shell=True, stderr=subprocess.STDOUT).decode('utf-8').strip('\n')
+        return 0, subprocess.run(command, shell=True, stderr=subprocess.STDOUT)
         #return subprocess.check_output("{0}".format(command), shell=True, stderr=subprocess.STDOUT).decode('utf-8')
     except subprocess.CalledProcessError as e:
         return 1, e.returncode, e.output.decode('utf-8').strip('\n')
