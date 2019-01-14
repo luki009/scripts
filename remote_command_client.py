@@ -10,7 +10,9 @@ import sys
 from cryptography.fernet import Fernet
 import requests
 import time
+import logging
 
+_LOG_PATH = '/home/crypto/remote_command.log'
 _DATA = {
     'action': 'remcmd',
     'client': socket.gethostname(),
@@ -33,6 +35,7 @@ mn_conf_path_locate_cmd = 'find /home/crypto/.*core -name "*.conf" ! -path "/hom
 # server_port = 9000
 
 def exec_command(command):
+    logging.debug('Command: {0}'.format(command))
     try:
         return 0, subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT).decode('utf-8').strip('\n')
         #return subprocess.check_output("{0}".format(command), shell=True, stderr=subprocess.STDOUT).decode('utf-8')
@@ -40,6 +43,7 @@ def exec_command(command):
         return 1, e.returncode, e.output.decode('utf-8').strip('\n')
 
 def exec_command_no_wait(command):
+    logging.debug('Command: {0}'.format(command))
     try:
         return 0, subprocess.run(command, shell=True, stderr=subprocess.STDOUT)
         #return subprocess.check_output("{0}".format(command), shell=True, stderr=subprocess.STDOUT).decode('utf-8')
@@ -165,6 +169,8 @@ def responseDispatcher(data):
     else:
         resp_data['status'] = 'FAILED'
         resp_data['output'] = resp_status[1]
+    logging.debug('Command status: {0} '.format(resp_data['status']))
+    logging.debug('Command result: {0} '.format(resp_data['output']))
     sendSocketData(resp_data)
 
 def sendSocketData(message):
@@ -189,6 +195,7 @@ def sendSocketData(message):
     ssl_sock.close()
 
 if __name__ == "__main__":
+    logging.basicConfig(filename=_LOG_PATH, format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
     exec_command('cd /home/crypto/scripts && git pul')
     sendSocketData(_DATA)
     # string_message = json.dumps(_DATA)
