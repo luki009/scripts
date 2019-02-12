@@ -74,8 +74,8 @@ def get_smartcash_balance(wallet):
     except:
         exec_command('pip3 install bs4')
         return str(0)
-    s = requests.get('https://insight.smartcash.cc/address/{0}'.format(wallet)).text
-    print(s)
+    headers = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36', 'Host': 'insight.smartcash.cc', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8'}
+    s = requests.get('https://insight.smartcash.cc/address/{0}'.format(wallet), headers=headers).text
     soup = BeautifulSoup(s, 'html.parser')
     tables = soup.find_all('tbody')
     print(tables)
