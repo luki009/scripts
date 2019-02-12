@@ -70,16 +70,12 @@ def sendMail(toaddrs=None, subject=None, imsg=None):
 
 def get_smartcash_balance(wallet):
     try:
-        from bs4 import BeautifulSoup
+        s = requests.get('https://insight.smartcash.cc/api/addr/{0}'.format(wallet)).json()
+        # print(s)
+        return s['balance']
     except:
-        exec_command('pip3 install bs4')
         return str(0)
-    s = requests.get('https://insight.smartcash.cc/api/addr/{0}'.format(wallet)).json
-    print(s)
-    soup = BeautifulSoup(s, 'html.parser')
-    tables = soup.find_all('tbody')
-    print(tables)
-    return tables[0].find_all('td')[-3].get_text().strip('\n').strip(' SMART')
+
 
 def data_alert(string_data=None, nodename=None):
     if string_data == None:
