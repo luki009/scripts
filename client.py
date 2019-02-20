@@ -198,7 +198,7 @@ def get_masternode_status_data(cli_path, coin):
             elif 'outpoint' in MN_STATUS_DATA:
                 try:
                     MN_TX = re.search(r"(?<=Point\().*?(?=\))", MN_STATUS_DATA['outpoint']).group(0).split(',')[0]
-                else:
+                except:
                     MN_TX = MN_STATUS_DATA['outpoint']
 
             elif 'txhash' in MN_STATUS_DATA:
