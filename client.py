@@ -303,7 +303,8 @@ if __name__ == "__main__":
     mn_cli_path = exec_command(mn_cli_path_locate_cmd)
     MN_COIN = mn_cli_path.split('/')[-1].split('-')[0]
 
-    hostname = exec_command('hostname')
+    hostname = socket.gethostname()
+    ipaddr = socket.gethostbyname(socket.gethostname())
     mn_status_data = get_masternode_status_data(mn_cli_path, MN_COIN)
     if 'payee' in mn_status_data:
         mn_wallet = mn_status_data['payee']
@@ -329,6 +330,7 @@ if __name__ == "__main__":
         'action': 'mndata',
         'MnStatus': {
             'hostname': hostname,
+            'ipaddr': ipaddr,
             'action':'diu',
             'mn_health': mn_status_data,
             'update_time':str(UPDATE_TIME.strftime("%d.%m.%Y %H:%M:%S")),
