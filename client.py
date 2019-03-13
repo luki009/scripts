@@ -278,6 +278,8 @@ def get_masternode_balance(wallet_id, coin):
             return get_smartcash_balance(wallet_id)
         elif coin == 'crowncoin':
             return requests.get('http://ex.crownlab.eu/ext/getbalance/{0}'.format(wallet_id), headers=headers).text
+        elif coin == 'gincoin':
+            return requests.get('https://explorer.gincoin.io/ext/getbalance/{0}'.format(wallet_id), headers=headers).text
         else:
             return str(0)
     except:
