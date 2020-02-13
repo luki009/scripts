@@ -20,7 +20,7 @@ config.read(config_path)
 server_certificate = cipher_suite.decrypt(config['DEFAULT']['SSLCrtPath'].encode('utf-8')).decode('utf-8')
 server_ip = cipher_suite.decrypt(config['WEB']['Server_addr'].encode('utf-8')).decode('utf-8')
 server_port = cipher_suite.decrypt(config['WEB']['Server_port'].encode('utf-8')).decode('utf-8')
-mn_cli_path_locate_cmd = 'find /home/crypto/ -name "*-cli" ! -path "*qa*"'
+mn_cli_path_locate_cmd = 'find /home/crypto/ -name "*-cli" ! -path "*qa*" ! -name ".*"'
 _END_DATA = b'>END<'
 # mn_conf_path_locate_cmd = 'find /home/crypto/.*core -name "*.conf" ! -path "/home/crypto/.*/sentinel/*" ! -name "masternode*"'
 
@@ -33,6 +33,7 @@ smartn_list_cmd = 'smartnode list'
 mn_wallet_default_balance_cmd = 'getreceivedbyaddress' # + wallet id
 mn_wallet_transactions_cmd = 'listunspent'
 mn_import_wallet_cmd = 'importaddress'
+mn_blockcount_cmd = 'getblockcount'
 headers = {
     'User-agent':'Crypto_client_1.0'
 }
@@ -69,15 +70,12 @@ def sendMail(toaddrs=None, subject=None, imsg=None):
 
 def get_smartcash_balance(wallet):
     try:
-        from bs4 import BeautifulSoup
+        s = requests.get('https://insight.smartcash.cc/api/addr/{0}'.format(wallet)).json()
+        # print(s)
+        return s['balance']
     except:
-        exec_command('pip3 install bs4')
         return str(0)
-    s = requests.get('https://insight.smartcash.cc/address/{0}'.format(wallet)).text
-    soup = BeautifulSoup(s, 'html.parser')
-    tables = soup.find_all('tbody')
-    print(tables)
-    return tables[0].find_all('td')[-3].get_text().strip('\n').strip(' SMART')
+
 
 def data_alert(string_data=None, nodename=None):
     if string_data == None:
@@ -122,6 +120,10 @@ def sendSocketData(message):
         ssl_sock.close()
     # except:
     #     print("Problem with data send to server !!!")
+
+def get_node_block(cli_path):
+    cmd = '{0} {1}'.format(cli_path, mn_blockcount_cmd)
+    return exec_command(cmd)
 
 def get_masternode_status_data(cli_path, coin):
     masternode = 0
@@ -194,7 +196,11 @@ def get_masternode_status_data(cli_path, coin):
             if 'vin' in MN_STATUS_DATA:
                 MN_TX = re.search(r"(?<=Point\().*?(?=\),)", MN_STATUS_DATA['vin']).group(0).split(',')[0]
             elif 'outpoint' in MN_STATUS_DATA:
-                MN_TX = re.search(r"(?<=Point\().*?(?=\))", MN_STATUS_DATA['outpoint']).group(0).split(',')[0]
+                try:
+                    MN_TX = re.search(r"(?<=Point\().*?(?=\))", MN_STATUS_DATA['outpoint']).group(0).split(',')[0]
+                except:
+                    MN_TX = MN_STATUS_DATA['outpoint']
+
             elif 'txhash' in MN_STATUS_DATA:
                 MN_TX = MN_STATUS_DATA['txhash']
             # print(MN_TX)
@@ -272,6 +278,8 @@ def get_masternode_balance(wallet_id, coin):
             return get_smartcash_balance(wallet_id)
         elif coin == 'crowncoin':
             return requests.get('http://ex.crownlab.eu/ext/getbalance/{0}'.format(wallet_id), headers=headers).text
+        elif coin == 'gincoin':
+            return requests.get('https://explorer.gincoin.io/ext/getbalance/{0}'.format(wallet_id), headers=headers).text
         else:
             return str(0)
     except:
@@ -297,7 +305,8 @@ if __name__ == "__main__":
     mn_cli_path = exec_command(mn_cli_path_locate_cmd)
     MN_COIN = mn_cli_path.split('/')[-1].split('-')[0]
 
-    hostname = exec_command('hostname')
+    hostname = socket.gethostname()
+    ipaddr = socket.gethostbyname(socket.gethostname())
     mn_status_data = get_masternode_status_data(mn_cli_path, MN_COIN)
     if 'payee' in mn_status_data:
         mn_wallet = mn_status_data['payee']
@@ -314,6 +323,7 @@ if __name__ == "__main__":
     BALANCE = get_masternode_balance(mn_wallet, MN_COIN)
     UPDATE_TIME = datetime.now()
     WALLET_TRANSACTIONS = get_wallet_transactions(mn_cli_path, DEFAULT_BALANCE)
+    BLOCK = get_node_block(mn_cli_path)
 
 
 
@@ -322,9 +332,11 @@ if __name__ == "__main__":
         'action': 'mndata',
         'MnStatus': {
             'hostname': hostname,
+            'ipaddr': ipaddr,
             'action':'diu',
             'mn_health': mn_status_data,
-            'update_time':str(UPDATE_TIME.strftime("%d.%m.%Y %H:%M:%S"))
+            'update_time':str(UPDATE_TIME.strftime("%d.%m.%Y %H:%M:%S")),
+            'block': str(BLOCK)
         },
         'MnData': {
             'DEFAULT_BALANCE': DEFAULT_BALANCE,

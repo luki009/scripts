@@ -24,9 +24,11 @@ case $COIN in
   cd ~
   Bulwark/src/bulwark-cli getinfo
   Bulwark/src/bulwark-cli stop
+  sleep 3
   rm -rf Bulwark/
   mv tmp/Bulwark ./
   Bulwark/src/bulwarkd -daemon
+  sleep 10
   Bulwark/src/bulwark-cli getinfo
   rm -rf tmp
 ;;
@@ -43,9 +45,11 @@ case $COIN in
   cd ~
   ALQO/src/alqo-cli getinfo
   ALQO/src/alqo-cli stop
+  sleep 3
   rm -rf ALQO/
   mv tmp/ALQO ./
   ALQO/src/alqod -daemon
+  sleep 10
   ALQO/src/alqo-cli getinfo
   rm -rf tmp
 ;;
@@ -62,9 +66,11 @@ case $COIN in
   cd ~
   Bitcloud/src/bitcloud-cli getinfo
   Bitcloud/src/bitcloud-cli stop
+  sleep 3
   rm -rf Bitcloud/
   mv tmp/Bitcloud ./
   Bitcloud/src/bitcloudd -daemon
+  sleep 10
   Bitcloud/src/bitcloud-cli getinfo
   rm -rf tmp
 ;;
@@ -81,9 +87,11 @@ case $COIN in
   cd ~
   innova/src/innova-cli getinfo
   innova/src/innova-cli stop
+  sleep 3
   rm -rf innova/
   mv tmp/innova ./
   innova/src/innovad -daemon
+  sleep 10
   innova/src/innova-cli getinfo
   rm -rf tmp
 ;;
@@ -100,9 +108,11 @@ case $COIN in
   cd ~
   Crowdcoin/src/crowdcoin-cli getinfo
   Crowdcoin/src/crowdcoin-cli stop
+  sleep 3
   rm -rf Crowdcoin/
   mv tmp/Crowdcoin ./
   Crowdcoin/src/crowdcoind -daemon
+  sleep 10
   Crowdcoin/src/crowdcoin-cli getinfo
   rm -rf tmp
 ;;
@@ -120,9 +130,11 @@ case $COIN in
   cd ~
   Crown/src/crown-cli getinfo
   Crown/src/crown-cli stop
+  sleep 3
   rm -rf Crown/
   mv tmp/Crown ./
   Crown/src/crownd -daemon
+  sleep 10
   Crown/src/crown-cli getinfo
   rm -rf tmp
 ;;
@@ -140,9 +152,11 @@ case $COIN in
   cd ~
   smartcash/src/smartcash-cli getinfo
   smartcash/src/smartcash-cli stop
+  sleep 3
   rm -rf smartcash/
   mv tmp/smartcash ./
   smartcash/src/smartcashd -daemon
+  sleep 10
   smartcash/src/smartcash-cli getinfo
   rm -rf tmp
 ;;
@@ -159,9 +173,11 @@ case $COIN in
   cd ~
   vivo/src/vivo-cli getinfo
   vivo/src/vivo-cli stop
+  sleep 3
   rm -rf vivo/
   mv tmp/vivo ./
   vivo/src/vivod -daemon
+  sleep 10
   vivo/src/vivo-cli getinfo
   rm -rf tmp
 ;;
